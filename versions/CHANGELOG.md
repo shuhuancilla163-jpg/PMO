@@ -6,18 +6,33 @@
 
 ## [Unreleased]
 
-### Added
-- 0.0.10 PMO 1 套规范 + N 项目复用原则 (DEC-2026-0001)
-- 三权分立 (L0 监督 / L1 行政 / L2 司法)
-- 3 层异常拦截 (PMO 规范不参与业务, PMO 实例拦截项目级, 业务项目拦截自身)
-- 3 层告警 (业务自给, 重大→PMO, PMO→Sponsor)
-- 业务知识库 2 层 (通用 + 专有)
-- 业务指标 5 项 (流耗时/异常率/通过率/回滚率/Token)
-- 业务资源配额 4 维 (Token/时间/存储/并发)
-- 业务归档 4 层面 (数据/文档/项目/资源)
-- 业务隔离 3 维 (数据/配置/状态全隔离)
-- 业务 checklist 基础 6 项 + Sponsor/复盘/规则
-- 业务告警 3 层
+### Added (DEC-2026-0002)
+- 业务项目 2 层合规 (业务项目整体 + 业务项目内研发 5 阶段)
+- 5 阶段研发角色 (Requirement-Engineer / Development-Engineer / Test-Engineer / Operations-Engineer / Evaluation-Engineer), PMO 监管, 业务项目可调
+- 8 PMO 角色 (从 5 → 8, 按 3 维度严格分离): Sponsor / PMO-Main / Plan / Engineer / Monitor / Reviewer / Assessor / Message-Broker
+- 3 维度架构 (业务项目整体 / 研发 5 阶段 / 业务项目内业务)
+- 3 维度分别考核 (L2 PMO-Assessor-Agent)
+- 3 维度监控 (L1 PMO-Main / L2 PMO-Engineer-Agent / L2 PMO-Monitor-Agent)
+- 3 层上报机制 (业务项目自采 + 业务项目上报 + PMO 存上报)
+- 项目间消息经 PMO 中介 (L2 PMO-Message-Broker-Agent)
+- 业务项目接入 PMO 5 步流程
+- 业务项目整体契约模板 + 业务项目研发 5 阶段契约模板
+- 业务项目自管业务内容 (业务场景/业务 agent/业务流程/业务异常/业务指标)
+- 业务项目上报关键指标 (5 项基础 + 自定义)
+- PMO 监管上报合规 (3 项指标)
+- 3 层异常拦截边界清晰化 (业务异常业务项目拦截, 研发异常 + 项目异常 PMO 实例拦截)
+- 0.0.7 解耦原则严格化 (PMO 定规范, 业务项目管具体)
+
+### Changed
+- 业务 agent 不再固定 8 个, 业务项目按业务场景配置
+- PMO 不提供业务场景模板, 业务项目自维护
+- 业务项目模板结构 (新增 eng-roles/, messaging.yaml, reports/, 5 阶段产出目录)
+
+### Fixed
+- (无)
+
+### Removed
+- (无)
 
 ### Changed
 - PMO 部署: 本地优先 (Q2)

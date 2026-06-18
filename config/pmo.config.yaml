@@ -69,7 +69,228 @@ governance:
     L2_sponsor: "PMO→Sponsor"
 
 # ============================================
-# 业务接入路径 (1 套, 0.0.10)
+# PMO 角色 (DEC-2026-0002 调整, 5 → 8)
+# ============================================
+# 8 PMO 角色按 3 维度严格分离:
+#   L0 监督权 (1 个): Sponsor
+#   L1 行政权 (1 个): PMO-Main (维度 1: 业务项目整体)
+#   L2 司法权 (6 个):
+#     - Plan-Agent (计划/治理)
+#     - Engineer-Agent (维度 2: 研发 5 阶段)
+#     - Monitor-Agent (维度 3: 业务项目上报)
+#     - Reviewer-Agent (审查/审计)
+#     - Assessor-Agent (3 维度分别考核)
+#     - Message-Broker-Agent (项目间消息)
+pmo_agents:
+  L0_sponsor:
+    name: "Sponsor"
+    role: "监督权 (人机, 看指标看板, 不执行)"
+    count: 1
+  
+  L1_pmo_main:
+    name: "PMO-Main"
+    role: "行政权 (1 实例, 管 N 项目)"
+    count: 1
+    data_dimension: "维度 1: 业务项目整体"
+  
+  L2_judicial:
+    - name: "PMO-Plan-Agent"
+      role: "司法权 (计划/治理)"
+      data_dimension: "维度 1 (项目治理)"
+    - name: "PMO-Engineer-Agent"
+      role: "司法权 (工程)"
+      data_dimension: "维度 2: 业务项目内研发 5 阶段"
+    - name: "PMO-Monitor-Agent"
+      role: "司法权 (监控)"
+      data_dimension: "维度 3: 业务项目上报"
+    - name: "PMO-Reviewer-Agent"
+      role: "司法权 (审查/审计)"
+      data_dimension: "3 维度综合审查"
+    - name: "PMO-Assessor-Agent"
+      role: "司法权 (考核)"
+      data_dimension: "3 维度分别考核"
+    - name: "PMO-Message-Broker-Agent"
+      role: "司法权 (消息)"
+      data_dimension: "项目间消息"
+
+# ============================================
+# 业务项目 2 层合规 (DEC-2026-0002)
+# ============================================
+biz_project_compliance:
+  level_1_project_overall:
+    description: "业务项目整体符合 PMO m2.6 7 项"
+    pmo_agent: "L1 PMO-Main"
+    data_source: "register.yaml + state + quota + archive + isolation"
+    items:
+      - "业务项目注册"
+      - "业务项目状态机"
+      - "业务项目配额 4 维"
+      - "业务项目归档 4 层面"
+      - "业务项目隔离 3 维"
+      - "业务项目告警 3 层"
+  
+  level_2_eng_5_stages:
+    description: "业务项目内研发 5 阶段符合 PMO 7 项"
+    pmo_agent: "L2 PMO-Engineer-Agent"
+    data_source: "eng-roles/ + 5 阶段产出"
+    stages:
+      requirement:
+        role: "Requirement-Engineer"
+        pmo_compliance: ["阶段门控", "决策日志", "不可变文档"]
+        optional: true
+      development:
+        role: "Development-Engineer"
+        pmo_compliance: ["阶段门控", "决策日志", "不可变文档", "异常拦截"]
+        optional: false
+      test:
+        role: "Test-Engineer"
+        pmo_compliance: ["阶段门控", "异常拦截", "指标可贯彻"]
+        optional: false
+      operations:
+        role: "Operations-Engineer"
+        pmo_compliance: ["阶段门控", "异常拦截", "3 层告警", "灾备"]
+        optional: false
+      evaluation:
+        role: "Evaluation-Engineer"
+        pmo_compliance: ["决策日志", "指标可贯彻", "Sponsor 报告", "自进化"]
+        optional: true
+
+# ============================================
+# 业务项目内业务自管 (DEC-2026-0002)
+# ============================================
+biz_self_managed:
+  description: "业务项目自管业务内容, PMO 不干预"
+  items:
+    biz_scenario: "业务项目自选 (后期定)"
+    biz_agent: "业务项目按业务场景配置 (不固定 8 个)"
+    biz_flow: "业务项目自维护业务流模板"
+    biz_exception: "业务项目自定义具体业务异常"
+    biz_metrics_full: "业务项目自维护业务全量数据"
+    biz_data_storage: "业务项目自存 (PMO 不存)"
+
+# ============================================
+# 3 层上报机制 (DEC-2026-0002)
+# ============================================
+three_layer_reporting:
+  description: "业务项目自采 + 业务项目上报 + PMO 存上报"
+  layer_1_biz_self_collect:
+    description: "业务项目自采业务全量数据"
+    owner: "业务项目"
+    storage: "业务项目自存 (PMO 不存)"
+  layer_2_biz_report_to_pmo:
+    description: "业务项目按 PMO 规范上报关键指标"
+    owner: "业务项目自采 + 按 PMO 规范上报"
+    storage: "业务项目存 + 上报到 PMO"
+    report_metrics_5_basic:
+      - "flow_latency"
+      - "exception_rate"
+      - "pass_rate"
+      - "rollback_rate"
+      - "token_consumption"
+    report_metrics_custom: "业务项目自定义 (按业务场景)"
+  layer_3_pmo_store_reported:
+    description: "PMO 存上报数据 + 监管上报合规"
+    owner: "PMO 实例"
+    storage: "PMO 存上报数据"
+    pmo_role: "L2 PMO-Monitor-Agent 采上报数据 + 监管上报合规"
+    report_compliance_metrics:
+      - "biz_metrics_report_compliance"
+      - "biz_metrics_report_timeliness"
+      - "biz_metrics_report_completeness"
+
+# ============================================
+# 3 维度考核 (DEC-2026-0002)
+# ============================================
+three_dimension_assessment:
+  description: "PMO-Assessor-Agent 按 3 维度分别考核"
+  dimension_1_project_overall:
+    assessor: "L2 PMO-Assessor-Agent"
+    assessed: "业务项目整体"
+    criteria: "PMO m2.6 7 项"
+    metrics:
+      - "biz_project_compliance_rate"
+      - "biz_project_quota_usage"
+      - "biz_project_state_legality"
+      - "biz_project_archive_completeness"
+      - "biz_project_isolation_violation"
+      - "biz_project_alert_count"
+  dimension_2_eng_5_stages:
+    assessor: "L2 PMO-Assessor-Agent"
+    assessed: "业务项目内研发 5 阶段"
+    criteria: "PMO 7 项"
+    metrics:
+      - "requirement_phase_compliance"
+      - "development_phase_compliance"
+      - "test_phase_compliance"
+      - "operations_phase_compliance"
+      - "evaluation_phase_compliance"
+  dimension_3_biz_report:
+    assessor: "L2 PMO-Assessor-Agent"
+    assessed: "业务项目内业务上报合规"
+    criteria: "PMO 规范上报"
+    metrics:
+      - "biz_metrics_report_compliance"
+      - "biz_metrics_report_timeliness"
+      - "biz_metrics_report_completeness"
+
+# ============================================
+# 项目间消息 (DEC-2026-0002)
+# ============================================
+inter_project_messaging:
+  description: "业务项目↔业务项目消息经 PMO 实例中介"
+  pmo_agent: "L2 PMO-Message-Broker-Agent"
+  message_types:
+    - "request/response (同步)"
+    - "notification/alert/escalation (异步)"
+    - "biz_event (业务项目状态变化/业务指标超阈值/业务异常)"
+    - "biz_data (业务结果/业务报告)"
+  message_topics:
+    - "biz.{biz_project_id}.state"
+    - "biz.{biz_project_id}.metric"
+    - "biz.{biz_project_id}.exception"
+    - "biz.{biz_project_id}.data"
+    - "inter.biz.{biz_project_id_a}.to.{biz_project_id_b}"
+  message_protocol:
+    protocol: "PMO 通信协议 (m0.2 protocol.py 扩展)"
+    format: "JSON"
+    qos: "at-least-once"
+  message_monitorable: true
+  message_auditable: true
+  audit_log: "决策日志 (append-only)"
+
+# ============================================
+# 业务项目接入 5 步流程 (DEC-2026-0002)
+# ============================================
+biz_project_onboarding_5_steps:
+  step_1_registration:
+    description: "业务项目注册 (m2.6)"
+    actions:
+      - "业务项目填 register.yaml"
+      - "业务项目签 2 份契约 (业务项目整体 + 研发 5 阶段)"
+  step_2_eng_5_stages_declare:
+    description: "业务项目内研发 5 阶段声明 (m2.3 + m2.6)"
+    actions:
+      - "业务项目在 eng-roles/ 声明用了哪些研发角色"
+      - "业务项目可调整 5 阶段, 但必须符合 PMO 7 项"
+  step_3_biz_self_config:
+    description: "业务项目内业务配置 (业务项目自管)"
+    actions:
+      - "业务项目选业务场景 (后期定, 不预设)"
+      - "业务项目配置业务 agent (按业务场景)"
+      - "业务项目自定业务流程 + 业务异常定义 + 业务指标 + 业务数据存储"
+  step_4_messaging_onboarding:
+    description: "业务项目接入 PMO 消息机制 (m2.5)"
+    actions:
+      - "业务项目注册时声明订阅/发布消息主题 (messaging.yaml)"
+      - "业务项目通过 PMO-Message-Broker-Agent 发送/接收消息"
+  step_5_pmo_supervision_onboarding:
+    description: "业务项目接入 PMO 监管 (m1.3 + m0.4)"
+    actions:
+      - "业务项目按 PMO 规范上报关键指标 (5 项基础 + 自定义)"
+      - "PMO 监管上报合规 + 业务项目状态 + 业务异常"
+
+# ============================================
+# 业务接入路径 (1 套, 0.0.10 + DEC-2026-0002 调整)
 # ============================================
 biz_access:
   registration: "biz-projects/<project-id>/register.yaml"
@@ -78,7 +299,11 @@ biz_access:
   archive: "archive/biz-projects/<project-id>/"
   monitoring: "metrics/business/<project-id>/"
   checklist: "biz-projects/<project-id>/checklist.md"
-  contract: "immutable/2-biz-specs/contract-<project-id>.md"
+  contract_overall: "immutable/2-biz-specs/contract-<project-id>-overall.md"
+  contract_eng_5_stages: "immutable/2-biz-specs/contract-<project-id>-eng-5-stages.md"
+  messaging: "biz-projects/<project-id>/messaging.yaml"
+  reports: "biz-projects/<project-id>/reports/"
+  eng_roles: "biz-projects/<project-id>/eng-roles/"
 
 # ============================================
 # 业务隔离 (Q24/Q25/Q26: 全隔离)

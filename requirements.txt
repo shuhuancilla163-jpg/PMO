@@ -1,0 +1,19 @@
+# PMO 依赖 (requirements.txt)
+# 0.0.7 解耦: Python 包是工程实现层, 治理层不绑具体包
+
+# 核心
+pyyaml>=6.0
+jsonschema>=4.0
+
+# 异步 (后期)
+# aiohttp>=3.8
+# asyncio-throttle>=1.0
+
+# MCP (PMO↔业务契约, 后期)
+# mcp>=0.1
+
+# Git 操作
+gitpython>=3.1
+
+# 监控 (后期)
+# prometheus-client>=0.16

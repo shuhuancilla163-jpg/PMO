@@ -1,0 +1,44 @@
+# Docker Compose
+# PMO 部署 (本地优先, 容器可扩展)
+# Q2: PMO 本地优先, Docker 容器可扩展 (后期多项目)
+
+version: '3.8'
+
+services:
+  pmo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: pmo:0.3.0
+    container_name: pmo-instance
+    restart: unless-stopped
+    volumes:
+      # PMO 仓库持久化
+      - ./:/pmo
+      # PMO 日志
+      - ./logs:/pmo/logs
+    environment:
+      - PMO_ROOT=/pmo
+      - PMO_VERSION=0.3.0
+      - PMO_INSTANCE_ID=pmo-local-001
+    # 端口 (MCP / API, 后期)
+    # ports:
+    #   - "8080:8080"
+    
+    # 资源限制 (m0.4 运维)
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    
+    # 健康检查
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import sys; sys.path.insert(0, '/pmo/scripts/runtime'); from agents.agent_base import PMOInstance; pmo = PMOInstance('/pmo'); print('OK' if len(pmo.agents) == 5 else 'FAIL')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s

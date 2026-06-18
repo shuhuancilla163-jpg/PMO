@@ -1,0 +1,36 @@
+{
+  "decision_id": "DEC-2026-0001",
+  "timestamp": "2026-06-18T14:00:00Z",
+  "title": "PMO 1 套规范 + N 项目复用原则 (0.0.10)",
+  "category": "governance-change",
+  "context": "Sponsor 平等讨论后, 修订 PMO 多项目架构。最初理解是 1 个总 PMO + N 个项目 PMO, Sponsor 指出实际是 1 套 PMO 规范 + 1 个 PMO 实例 + N 个业务项目复用, 1 个 Sponsor 介入。",
+  "decision": "采用 0.0.10 原则: 1 套 PMO 规范, 1 个 PMO 实例, N 个业务项目, 1 个 Sponsor。废弃 1 总 PMO + N 项目 PMO 的双层架构。",
+  "rationale": "1 套规范比 1 总+项目 双层更简洁 (复杂度+0 而非+10), 基座完善更彻底 (1 套规范 N 项目复用, 后期接入不用改 PMO), 治理重复更低 (不重复规则), 递归更清晰 (1 个 PMO 实例自管 + Sponsor 监督)。",
+  "alternatives_considered": [
+    "1 总 PMO + N 项目 PMO (我之前理解)",
+    "1 PMO 实例 + N 项目接入 (0.0.10 最终方案)",
+    "完全无 PMO 自治, 全 Sponsor 管"
+  ],
+  "impact_analysis": {
+    "scope": "PMO 治理层 + agent 设计 + 业务接入路径",
+    "affected_projects": ["1.1-pmo-self", "1.2-biz", "1.3-biz", "1.4-biz"],
+    "risk": "low"
+  },
+  "actor": "L0 Sponsor (平等讨论推动)",
+  "sponsor_approved": true,
+  "approval_timestamp": "2026-06-18T14:00:00Z",
+  "implementation": {
+    "files_affected": [
+      "immutable/0-governance/0.0.10-1spec-Nprojects.md",
+      "config/pmo.config.yaml",
+      "ai_pmo_与业务系统架构方案_b58603d7.plan.md"
+    ],
+    "commits": [],
+    "release_version": "v0.1.0"
+  },
+  "links": {
+    "related_decisions": [],
+    "discussion": "plan mode 平等讨论",
+    "followup": "应用 0.0.10 到 m1.4 agent 设计 + m2.6 业务接入"
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://pmo.local/schemas/task.json",
+  "title": "PMO Task Schema",
+  "description": "任务 schema (含业务项目任务和 PMO 任务)",
+  "type": "object",
+  "required": [
+    "task_id",
+    "name",
+    "status",
+    "phase",
+    "owner",
+    "complexity"
+  ],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "pattern": "^(PMO|BIZ)-\\d{4}-\\d{3}$",
+      "description": "任务 ID (PMO-YYYY-NNN / BIZ-YYYY-NNN)"
+    },
+    "name": {
+      "type": "string",
+      "description": "任务名"
+    },
+    "description": {
+      "type": "string",
+      "description": "任务描述"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "in_progress", "blocked", "completed", "cancelled"],
+      "description": "任务状态"
+    },
+    "phase": {
+      "type": "string",
+      "enum": ["P0-init", "P1-spec", "P2-impl", "P3-test", "P4-deploy", "P5-archive"],
+      "description": "任务所在阶段"
+    },
+    "biz_project_id": {
+      "type": "string",
+      "description": "所属业务项目 ID (PMO 任务可为空)"
+    },
+    "owner": {
+      "type": "string",
+      "description": "任务负责人 (PMO agent / 业务 agent / Sponsor)"
+    },
+    "complexity": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "复杂度 (1-5)"
+    },
+    "depends_on": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "依赖的任务 ID 列表"
+    },
+    "blocks": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "被本任务阻塞的任务 ID 列表"
+    },
+    "acceptance_criteria": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "验收标准"
+    },
+    "metrics": {
+      "type": "object",
+      "description": "关联指标 (业务/治理/工程)"
+    },
+    "sponsor_review": {
+      "type": "object",
+      "properties": {
+        "required": { "type": "boolean" },
+        "reviewer": { "type": "string" },
+        "reviewed_at": { "type": "string", "format": "date-time" },
+        "result": { "type": "string", "enum": ["approved", "rejected", "pending"] },
+        "comments": { "type": "string" }
+      }
+    },
+    "start_time": { "type": "string", "format": "date-time" },
+    "end_time": { "type": "string", "format": "date-time" },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": false
+}

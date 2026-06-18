@@ -1,0 +1,195 @@
+# PMO 主配置 (pmo.config.yaml)
+# 治理层配置, 不绑定具体工程实现 (0.0.7)
+
+# ============================================
+# PMO 元信息
+# ============================================
+pmo:
+  version: "0.1.0"
+  name: "AI PMO Platform"
+  instance_id: "pmo-local-001"
+  # 1 套 PMO 规范, 1 个 PMO 实例, N 个业务项目 (0.0.10)
+  architecture: "1-spec-N-projects"
+  
+  # Sponsor (1 个, 0.0.10)
+  sponsor:
+    name: "Sponsor"
+    role: "PO / 决策授权方"
+    contact: "sponsor@local"
+  
+  # 三权分立 (0.0.10)
+  three_powers:
+    L0:
+      name: "Sponsor 监督权"
+      role: "顶层权威, 打破递归"
+      scope: "看指标看板, 不执行"
+    L1:
+      name: "PMO 行政权"
+      role: "1 个 PMO 实例, 管 N 项目"
+      scope: "执行, 自治, 出指标"
+    L2:
+      name: "PMO 司法权"
+      role: "3 个 L2 核心 agent 互相制衡"
+      scope: "审计 L1, 出指标, 互相验证"
+
+# ============================================
+# 部署 (0.0.7 + Q2: PMO 本地, 业务云上)
+# ============================================
+deployment:
+  pmo_target: "local"  # PMO 本地优先
+  pmo_sub_targets: ["cursor-harness", "container"]  # 可扩展
+  biz_target: "cloud"  # 业务系统云上自动化
+  remote_contract: true  # PMO↔业务远程契约
+  # 关注: 知识存储 + 性能
+  concerns: ["knowledge-storage", "performance"]
+
+# ============================================
+# 治理层 (不绑工程, 0.0.7)
+# ============================================
+governance:
+  # 5 价值 + 1 工程化
+  values: ["efficient", "standard", "controllable", "acceptance", "optimize", "engineering"]
+  # 阶段门控
+  phase_gates: ["P0-init", "P1-spec", "P2-impl", "P3-test", "P4-deploy", "P5-archive"]
+  # 异常 3 层拦截 (0.0.10)
+  exception_interception:
+    L0_pmo_spec:
+      scope: "标准制定 + 监督"
+      intercept: false  # PMO 规范不参与业务
+    L1_pmo_instance:
+      scope: "项目级 (含 PMO 自身)"
+      intercept: true
+    L2_biz_project:
+      scope: "业务内部"
+      intercept: true
+  # 告警 3 层 (0.0.10)
+  alerting:
+    L0_biz: "业务自给, 自己处理"
+    L1_pmo: "重大→PMO"
+    L2_sponsor: "PMO→Sponsor"
+
+# ============================================
+# 业务接入路径 (1 套, 0.0.10)
+# ============================================
+biz_access:
+  registration: "biz-projects/<project-id>/register.yaml"
+  state_machine: "tasks/state/<project-id>.json"
+  quota: "config/biz-quota/<project-id>.yaml"
+  archive: "archive/biz-projects/<project-id>/"
+  monitoring: "metrics/business/<project-id>/"
+  checklist: "biz-projects/<project-id>/checklist.md"
+  contract: "immutable/2-biz-specs/contract-<project-id>.md"
+
+# ============================================
+# 业务隔离 (Q24/Q25/Q26: 全隔离)
+# ============================================
+biz_isolation:
+  data: "full"
+  config: "full"
+  state: "full"
+
+# ============================================
+# 知识库 (Q27: 通用+专有 2 层)
+# ============================================
+knowledge:
+  general: "biz-knowledge/general/"  # 通用共享
+  specific: "biz-knowledge/specific/"  # 业务专有
+
+# ============================================
+# 指标 (业务 5 + 治理 + 工程)
+# ============================================
+metrics:
+  business_basic_5:  # Q13 基础 5 项
+    - "flow_latency"
+    - "exception_rate"
+    - "pass_rate"
+    - "rollback_rate"
+    - "token_consumption"
+  governance:  # 治理层指标
+    - "phase_gate_pass_rate"
+    - "decision_log_completeness"
+    - "self_check_coverage"
+    - "self_evolution_count"
+  engineering:  # 工程层指标
+    - "deploy_success_rate"
+    - "performance"
+    - "availability"
+    - "exception_interception_rate"
+
+# ============================================
+# 业务配额 (Q15: 4 维)
+# ============================================
+biz_quota:
+  dimensions: ["token", "time", "storage", "concurrency"]
+
+# ============================================
+# 业务归档 (Q16: 4 层面)
+# ============================================
+biz_archive:
+  levels:
+    - "data"        # 数据归档
+    - "document"    # 文档归档
+    - "project"     # 项目归档
+    - "resource"    # 资源释放
+
+# ============================================
+# Token 预算 (Q28: 按业务项目分)
+# ============================================
+token_budget:
+  granularity: "per-biz-project"
+
+# ============================================
+# Sponsor 报告 (Q29: 按项目阶段)
+# ============================================
+sponsor_report:
+  frequency: "per-project-phase"
+
+# ============================================
+# 自进化 (0.0.8)
+# ============================================
+self_evolution:
+  scope: "PMO 规范自进化, 不绑定模型自进化"
+  triggers: ["复盘", "新工具"]
+  constraints:
+    - "不改价值层 (5 价值不变)"
+    - "不改治理层核心 (阶段门控/状态/异常/反思 不变)"
+    - "可改治理层细节 + 工程层"
+
+# ============================================
+# 模型选型 (0.0.8, 不锁模型)
+# ============================================
+model:
+  value_layer: "不提具体模型"
+  governance_layer: "使用 LLM (不锁定)"
+  engineering_layer: "工程实现层选 (GPT-4/Claude/Hermes/开源)"
+
+# ============================================
+# 工程实现层 (0.0.7, M7 选型时定)
+# ============================================
+engineering:
+  framework: "TBD-M7"          # Harness/Loop/Hermes/...
+  tool: "TBD-M7"                # MCP/Cursor Tool/...
+  deploy: "TBD-M7"              # 本地/容器/云/...
+  model: "TBD-M7"               # GPT-4/Claude/Hermes/...
+  storage: "TBD-M7"             # Memory/不可变库/...
+
+# ============================================
+# 业务项目 (1.1, 0.0.10)
+# ============================================
+biz_projects:
+  current:
+    - id: "1.1"
+      name: "PMO 系统自建"
+      status: "active"
+      description: "PMO 平台搭建 + 1 套规范 + 1 个实例 + 自测"
+  future:
+    - id: "1.2"
+      name: "业务系统 (1.2)"
+      status: "pending"
+      description: "1.1 完成后启动, 业务类型后期定"
+    - id: "1.3"
+      name: "业务系统 (1.3)"
+      status: "pending"
+    - id: "1.4"
+      name: "业务系统 (1.4)"
+      status: "pending"

@@ -1,0 +1,71 @@
+# 1.1 PMO 自建 — 业务项目注册
+
+```yaml
+# 业务项目注册 (PMO 实例使用)
+project_id: "1.1"
+name: "PMO 系统自建"
+type: "pmo-platform"
+version: "0.1.0"
+status: "active"
+
+# Sponsor
+sponsor: "Sponsor"
+
+# 注册时间
+registered_at: "2026-06-18T14:00:00Z"
+phase: "P0-init"
+
+# 任务清单
+tasks:
+  total: 24
+  complexity: 78
+  pending: 23
+  in_progress: 1
+  completed: 0
+
+# 治理层引用
+governance_refs:
+  - "immutable/0-governance/0.0.1-five-values.md"
+  - "immutable/0-governance/0.0.7-decoupling-4layers.md"
+  - "immutable/0-governance/0.0.8-self-evolution.md"
+  - "immutable/0-governance/0.0.9-base-completion.md"
+  - "immutable/0-governance/0.0.10-1spec-Nprojects.md"
+
+# 业务接入路径
+access_path:
+  registration: "biz-projects/1.1-pmo-self/register.yaml"
+  state_machine: "tasks/state/1.1-pmo-self.json"
+  quota: "config/biz-quota/1.1-pmo-self.yaml"
+  archive: "archive/biz-projects/1.1-pmo-self/"
+  monitoring: "metrics/business/1.1-pmo-self/"
+  checklist: "biz-projects/1.1-pmo-self/checklist.md"
+  contract: "immutable/2-biz-specs/contract-1.1-pmo-self.md"
+
+# 业务指标 (基础 5 项 + 自定义)
+metrics:
+  business_basic_5:
+    - flow_latency
+    - exception_rate
+    - pass_rate
+    - rollback_rate
+    - token_consumption
+  custom: []
+
+# 业务配额 (4 维)
+quota:
+  token: "10000000"        # 1000万 token
+  time: "unlimited"        # 无时间限制 (开发期)
+  storage: "10GB"          # 10GB 存储
+  concurrency: 5           # 5 并发
+
+# 业务隔离 (全隔离, 1 个项目也设)
+isolation:
+  data: "full"
+  config: "full"
+  state: "full"
+
+# 告警 (3 层)
+alerting:
+  biz: "self"               # 业务自给
+  pmo: "重大→PMO"
+  sponsor: "PMO 重大→Sponsor"

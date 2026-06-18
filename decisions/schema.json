@@ -1,0 +1,105 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://pmo.local/schemas/decision-log.json",
+  "title": "PMO Decision Log Entry",
+  "description": "决策日志条目 (append-only, 不可修改, 不可删除)",
+  "type": "object",
+  "required": [
+    "decision_id",
+    "timestamp",
+    "title",
+    "category",
+    "context",
+    "decision",
+    "rationale",
+    "actor",
+    "sponsor_approved",
+    "approval_timestamp"
+  ],
+  "properties": {
+    "decision_id": {
+      "type": "string",
+      "pattern": "^DEC-\\d{4}-\\d{4}$",
+      "description": "决策 ID (DEC-YYYY-NNNN)"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "决策创建时间 (ISO 8601)"
+    },
+    "title": {
+      "type": "string",
+      "description": "决策标题"
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "governance-change",
+        "value-change",
+        "self-evolution",
+        "engineering-change",
+        "biz-project-decision",
+        "exception-handling",
+        "sponsor-override",
+        "phase-gate",
+        "milestone"
+      ],
+      "description": "决策类别"
+    },
+    "context": {
+      "type": "string",
+      "description": "决策背景 / 问题描述"
+    },
+    "decision": {
+      "type": "string",
+      "description": "决策内容 (具体改什么/做什么)"
+    },
+    "rationale": {
+      "type": "string",
+      "description": "决策理由 (为什么这样做)"
+    },
+    "alternatives_considered": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "考虑的备选方案"
+    },
+    "impact_analysis": {
+      "type": "object",
+      "properties": {
+        "scope": { "type": "string" },
+        "affected_projects": { "type": "array", "items": { "type": "string" } },
+        "risk": { "type": "string", "enum": ["low", "medium", "high"] }
+      }
+    },
+    "actor": {
+      "type": "string",
+      "description": "谁提出/推动 (L0 Sponsor / L1 PMO / L2 agent)"
+    },
+    "sponsor_approved": {
+      "type": "boolean",
+      "description": "Sponsor 是否批准"
+    },
+    "approval_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Sponsor 批准时间"
+    },
+    "implementation": {
+      "type": "object",
+      "properties": {
+        "files_affected": { "type": "array", "items": { "type": "string" } },
+        "commits": { "type": "array", "items": { "type": "string" } },
+        "release_version": { "type": "string" }
+      }
+    },
+    "links": {
+      "type": "object",
+      "properties": {
+        "related_decisions": { "type": "array", "items": { "type": "string" } },
+        "discussion": { "type": "string" },
+        "followup": { "type": "string" }
+      }
+    }
+  },
+  "additionalProperties": false
+}

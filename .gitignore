@@ -1,0 +1,21 @@
+# PMO 运行时自生成内容 (不进 Git)
+memory/cache/
+memory/hot/
+metrics/runtime/
+tasks/queue/active
+tasks/queue/processing
+reports/runtime/
+biz-projects/*/runtime/
+biz-projects/*/cache/
+
+# 编辑器/系统
+.DS_Store
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# 临时
+*.tmp
+*.log
+nohup.out

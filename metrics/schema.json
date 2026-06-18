@@ -1,0 +1,76 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://pmo.local/schemas/metric.json",
+  "title": "PMO Metric Schema",
+  "description": "指标 schema (业务/治理/工程三类, 指标可贯彻)",
+  "type": "object",
+  "required": [
+    "metric_id",
+    "name",
+    "category",
+    "type",
+    "unit",
+    "scope",
+    "collection",
+    "purpose"
+  ],
+  "properties": {
+    "metric_id": {
+      "type": "string",
+      "pattern": "^(BIZ|GOV|ENG)-M-\\d{3}$",
+      "description": "指标 ID (BIZ/GOV/ENG-M-NNN)"
+    },
+    "name": {
+      "type": "string",
+      "description": "指标名"
+    },
+    "category": {
+      "type": "string",
+      "enum": ["business", "governance", "engineering"],
+      "description": "指标类别"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["counter", "gauge", "histogram", "summary"],
+      "description": "指标类型"
+    },
+    "unit": {
+      "type": "string",
+      "description": "单位 (秒/百分比/次/个/...)"
+    },
+    "scope": {
+      "type": "string",
+      "enum": ["biz-project", "pmo-instance", "pmo-spec", "global"],
+      "description": "作用域"
+    },
+    "collection": {
+      "type": "object",
+      "properties": {
+        "method": { "type": "string" },
+        "frequency": { "type": "string" },
+        "storage": { "type": "string" }
+      },
+      "required": ["method", "frequency", "storage"]
+    },
+    "purpose": {
+      "type": "string",
+      "description": "指标用途 (为什么采这个指标)"
+    },
+    "sponsor_observable": {
+      "type": "boolean",
+      "description": "Sponsor 是否可直接观察 (用于打破 PMO 自治粉饰)"
+    },
+    "alert_rules": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "condition": { "type": "string" },
+          "severity": { "type": "string", "enum": ["info", "warning", "critical"] },
+          "notify": { "type": "string", "enum": ["biz-project", "pmo-instance", "sponsor"] }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

@@ -4,6 +4,35 @@
 
 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.9.0] - 2026-06-19
+
+### Added (m1.5 PMO 自检, 9 项 + DEC-2026-0002 3 项 + 4 项机制)
+- scripts/runtime/self_check/self_check.py: SelfChecker
+  - 9 项基础自检 (m1.5):
+    - D1 阶段流转合规
+    - D2 阶段门控生效
+    - D3 不可变文档完整性
+    - D4 接口契约一致性
+    - D10 跨级汇报检测
+    - D11 主 agent 越权检测
+    - D12 子 agent 决策越权检测
+    - D13 异常拦截检测
+    - D16 指标可贯彻检测
+  - DEC-2026-0002 加 3 项:
+    - 业务项目考核自检 (Assessor-Agent 3 维度)
+    - 3 维度监控自检 (PMO-Main/Engineer/Monitor)
+    - 消息流通自检 (Message-Broker 3 步)
+  - 4 项机制:
+    - PMO 升级机制 (不可变文档签名 sha256)
+    - Sponsor 报告可出
+    - 自进化机制 (ReflectionManager 0.0.8)
+    - 指标看板可看
+- tests/m1.5-self-check-report.json (新建, 15/16 pass 93.8%)
+- docs/m1.5-self-check.md (新建, 9 项 + DEC-2026-0002 3 项 + 4 项机制 + 验收 + API)
+
+### 自检结果
+- 15/16 pass (93.8%), 1 项警告 (D16 路径)
+
 ## [0.8.0] - 2026-06-19
 
 ### Added (m1.4 8 PMO 角色规范, DEC-2026-0002 5 → 8)

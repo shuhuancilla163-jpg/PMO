@@ -1,0 +1,102 @@
+{
+  "id": "DEC-2026-0008",
+  "decision_id": "DEC-2026-0008",
+  "date": "2026-06-19",
+  "title": "m0.8 双向消息通知机制（Schema 变更通知 + 业务上报）",
+  "version": "v0.13.0",
+  "author": "AI Operator (Engineer-Agent)",
+  "reviewer": "Sponsor",
+  "status": "pending",
+  "task": "m0.8",
+  "summary": "建立业务项目 ↔ PMO 双向通知机制：PMO 通过 Message-Broker 发轻量 Ping，业务系统主动 Pull 完整变更（Schema 变更通知方向）；业务系统通过 Message-Broker Push 指标/异常/关键数据到 PMO（业务上报方向）。完整 Pull + Push 混合方案，PMO 不依赖业务系统在线，所有消息经 PMO 中介可监控可审计。",
+
+  "background": "当前 PMO 侧有两类消息流通缺失：\n1. PMO 变更 E2/E3 Schema 后，无机制通知业务系统；\n2. 业务系统运行时无机制向 PMO 上报指标/异常/关键数据。\n\nSOP（m2.6 data-sync.yaml）已有 schema_change_policy 声明，但无代码实现。Message-Broker（m1.6）已有基础管道，但缺少两个新主题。",
+
+  "decisions": [
+    {
+      "id": 1,
+      "title": "PMO → 业务系统：Schema 变更 Pull 通知机制",
+      "description": "PMO Schema Watcher 监听 E2/E3/data-sync.yaml 的 hash 变化，变化时通过 Message-Broker 主题 pmo.schema.change 发轻量 Ping（QoS 1），业务系统收到后主动调用 GET /pmo-api/v1/schema/changes/{event_id} 拉取完整变更。适配完成后发 ACK 到 biz.{id}.schema.ack，超时不 ACK 触发告警。",
+      "rationale": "Pull 为主：PMO 不管理每个业务系统的在线状态，不主动 Push 内容，业务系统自控同步节奏，离线不丢消息。轻量 Ping 降低 PMO 复杂度。"
+    },
+    {
+      "id": 2,
+      "title": "业务系统 → PMO：指标/异常/关键数据 Push 上报",
+      "description": "业务系统通过 Message-Broker Push 三类数据到 PMO：biz.{id}.metric（指标，QoS 1）、biz.{id}.exception（异常告警，QoS 0）、biz.{id}.data（关键业务数据，QoS 2）。PMO 接收后写指标看板、写告警队列、写 data-logs。",
+      "rationale": "Push 上报：业务系统是数据产生方，PMO 是数据消费方，业务系统主动上报最自然。所有数据经 Message-Broker 中介，PMO 可监控可审计。"
+    },
+    {
+      "id": 3,
+      "title": "新增两个 Message-Broker 主题",
+      "description": "在 m1.6 六类主题基础上，新增两个 PMO 级主题：pmo.schema.change（PMO Schema 变更 Ping）和 biz.{id}.schema.ack（业务系统适配 ACK）。现有 biz.{id}.metric/exception/data 主题已存在，直接复用。",
+      "rationale": "新主题与现有 Message-Broker 协议一致，无需修改 broker 核心逻辑，只需注册新主题并写入 Topic 规范文档。"
+    },
+    {
+      "id": 4,
+      "title": "新增 D26/D27 自检",
+      "description": "D26：Schema 变更通知自检（E2/E3 变更触发事件、事件写入 sync-logs、业务系统可订阅 pmo.schema.change、ACK 超时告警）。D27：业务系统上报自检（metric/exception/data 上报全通、PMO 看板更新）。",
+      "rationale": "自检覆盖双向通知的完整链路，确保机制落地而非仅 SOP 声明。"
+    }
+  ],
+
+  "key_blocks": [
+    {
+      "block": "Schema Watcher",
+      "details": "监听 config/biz-meta/ 下 E2-schema-*.json、E3-glossary-*.json 和 config/data-sync.yaml；检测 sha256 hash 变化或 version 字段递增；生成变更事件写入 logs/schema-watcher/change-events-YYYYMMDD.json"
+    },
+    {
+      "block": "轻量 Ping（不发完整内容）",
+      "details": "pmo.schema.change 主题 payload 只含：event_id、event_type、changed_files 摘要、severity、pmo_instance；完整变更内容由业务系统 GET 接口拉取"
+    },
+    {
+      "block": "ACK 超时机制",
+      "details": "PMO 维护每个变更事件的 ACK 状态；默认超时 7 天；超时报 warning，breaking 变更超时报 escalation；超时不 ACK 可暂停业务项目（需 Sponsor 确认）"
+    },
+    {
+      "block": "业务上报 QoS 分级",
+      "details": "指标（metric）：QoS 1 at-least-once；异常（exception）：QoS 0 fire-and-forget；关键数据（data）：QoS 2 exactly-once"
+    }
+  ],
+
+  "files_to_add": [
+    "docs/m0.8-bidirectional-notification.md",
+    "scripts/runtime/schema_watcher/schema_watcher.py",
+    "scripts/runtime/schema_watcher/__init__.py",
+    "scripts/runtime/schema_watcher/m0_8_self_test.py",
+    "logs/schema-watcher/.gitkeep"
+  ],
+
+  "files_to_update": [
+    "immutable/0-governance/0.0.15-inter-biz-messaging.md (新增 pmo.schema.change 和 biz.{id}.schema.ack 主题)",
+    "scripts/runtime/protocol/message_broker.py (注册两个新主题)",
+    "scripts/runtime/self_check/self_check.py (新增 D26 + D27)",
+    "docs/m1.6-message-broker.md (同步新主题)",
+    "config/pmo.config.yaml (Schema Watcher 开关，默认关闭)"
+  ],
+
+  "metarule_impact": "0.0.15 项目间消息流通 新增 pmo.schema.change 和 biz.{id}.schema.ack 两个主题",
+
+  "impact": {
+    "m1.6": "Message-Broker 新增 2 个主题（pmo.schema.change / biz.{id}.schema.ack），需同步更新规范文档",
+    "m2.6": "data-sync.yaml 的 schema_change_policy 现有 SOP 声明，补代码实现",
+    "m1.5": "业务系统适配后触发 metric 上报，形成反馈闭环",
+    "Sponsor": "Sponsor 可通过 biz.{id}.exception 异常主题实时感知业务系统运行状况"
+  },
+
+  "verification": {
+    "D26": "Schema 变更通知自检（待实现）",
+    "D27": "业务系统上报自检（待实现）",
+    "m0_8_self_test": "端到端自测（待实现）"
+  },
+
+  "release_version": "v0.14.0",
+
+  "next_step": "DEC 审批通过后，实施 Schema Watcher 代码（D26 自检先行），再实施业务上报机制（D27）",
+
+  "approval_checklist": {
+    "sponsor_approve": false,
+    "mechanism_agreed": false,
+    "two_new_topics_approved": false,
+    "D26_D27_approved": false
+  }
+}

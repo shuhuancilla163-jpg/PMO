@@ -4,6 +4,32 @@
 
 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.5.0] - 2026-06-19
+
+### Added (m1.2 合规模块, DEC-2026-0002 实施)
+- scripts/runtime/compliance/compliance.py: ComplianceChecker + MetricsTraceabilityChecker
+  - 5 项基础合规工具 (m1.2):
+    - C11 gitleaks 密钥扫描 (AWS/GitHub/OpenAI/Private Key/Generic API Key)
+    - C12 redact.py 脱敏 (email/phone/id_card/credit_card)
+    - C13 数据分级检查 (4 级: public/internal/confidential/secret)
+    - B13 redaction-rules 脱敏规则文档存在性
+    - B14 audit-log-spec 审计日志规范
+  - DEC-2026-0002 加 3 项:
+    - 业务项目考核合规 (Assessor-Agent 3 维度)
+    - 监控合规 (3 维度监控 + 3 告警层)
+    - 消息流通合规 (Message-Broker-Agent 中介)
+  - 指标可贯彻验证: MetricsTraceabilityChecker (3 件事: 可采集 + 可审计 + 可贯彻)
+- docs/m1.2-compliance.md (新建, 5 项 + DEC-2026-0002 3 项 + 验收 + API)
+
+### 验收 (7 项)
+- 5 项合规工具可用 ✅
+- 指标可采集 ✅
+- 指标可审计 ✅
+- 指标可贯彻验证可演示 ✅
+- 业务项目考核合规 ✅
+- 监控合规 ✅
+- 消息流通合规 ✅
+
 ## [0.4.0] - 2026-06-19
 
 ### Added (m0.4 运维, DEC-2026-0002 实施)

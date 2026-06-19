@@ -1,20 +1,20 @@
 {
   "version": "0.11.0",
   "decision": "DEC-2026-0004",
-  "test_date": "2026-06-19T02:00:14.041830+00:00",
+  "test_date": "2026-06-19T02:16:57.902681+00:00",
   "task": "m1.6 项目间消息流通",
   "checks": [
     {
       "id": "V1_broker_agent_works",
       "name": "PMO-Message-Broker-Agent 可演示",
       "result": "pass",
-      "details": "subscribe OK, publish msg_id=ef4e65fc, status=delivered"
+      "details": "subscribe OK, publish msg_id=abf74830, status=delivered"
     },
     {
       "id": "V2_inter_biz_routing",
       "name": "业务项目↔业务项目消息经 PMO 中介可跑",
       "result": "pass",
-      "details": "1.2→broker→1.3 路由, msg_id=7d740c32, status=acked"
+      "details": "1.2→broker→1.3 路由, msg_id=94de8a71, status=acked"
     },
     {
       "id": "V3_msg_config",
@@ -39,7 +39,7 @@
         "message_total_failed": 3,
         "message_total_retried": 3,
         "message_total_acked": 1,
-        "message_avg_latency_ms": 0.011682510375976562,
+        "message_avg_latency_ms": 0.011444091796875,
         "message_success_rate": 40.0,
         "subscriptions_count": 3,
         "topics_count": 3,

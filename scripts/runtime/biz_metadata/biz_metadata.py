@@ -568,7 +568,7 @@ class BizMetadataStore:
 # 演示 / 自测
 # ============================================
 if __name__ == "__main__":
-    PMO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))))
+    PMO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
     print("=== PMO 业务元数据 3 项 (m2.1, DEC-2026-0005) 演示 ===\n")
 

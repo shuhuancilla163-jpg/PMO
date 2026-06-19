@@ -4,6 +4,32 @@
 
 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.6.0] - 2026-06-19
+
+### Added (m0.5 运行时自测, 12 项 100% pass, DEC-2026-0002)
+- scripts/runtime/pmo_self_test.py: SelfTest
+  - 12 项自测 (用 mock 数据验证)
+  - [1] PMO 实例能起来
+  - [2] 8 PMO 角色能激活
+  - [3] 状态机能跑
+  - [4] 状态能持久化
+  - [5] 业务项目能注册
+  - [6] 3 维度能采集
+  - [7] Assessor 能考核
+  - [8] Message-Broker 能投递
+  - [9] 触发器能触发
+  - [10] 异常能拦截
+  - [11] 指标能跑批
+  - [12] 反射能记录
+- tests/m0.5-self-test-report.json (新建, 12/12 pass 100.0%)
+- docs/m0.5-self-test.md (新建, 12 项 + 验收 + API)
+
+### 验收 (4 项)
+- PMO 能起来 ✅
+- agent 能激活 ✅
+- 状态能持久化 ✅
+- 用 mock 数据验证 ✅
+
 ## [0.5.0] - 2026-06-19
 
 ### Added (m1.2 合规模块, DEC-2026-0002 实施)

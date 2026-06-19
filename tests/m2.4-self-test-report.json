@@ -1,0 +1,35 @@
+{
+  "task": "m2.4",
+  "version": "v0.14.0",
+  "timestamp": "2026-06-19T13:05:00+08:00",
+  "total_tests": 16,
+  "passed": 16,
+  "failed": 0,
+  "tests": [
+    {
+      "name": "H1_sop_templates",
+      "passed": true,
+      "count": 5,
+      "sub_pass": 5
+    },
+    {
+      "name": "H2_exception_handling",
+      "passed": true,
+      "count": 4,
+      "sub_pass": 4
+    },
+    {
+      "name": "H3_rollback_granularity",
+      "passed": true,
+      "count": 2,
+      "sub_pass": 2
+    },
+    {
+      "name": "H4_biz_flow_orchestration",
+      "passed": true,
+      "count": 5,
+      "sub_pass": 5
+    }
+  ],
+  "overall": true
+}

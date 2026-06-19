@@ -1,0 +1,34 @@
+{
+  "version": "0.12.0",
+  "decision": "DEC-2026-0005",
+  "test_date": "2026-06-19T04:48:14.131669+00:00",
+  "task": "m2.1 业务元数据 3 项",
+  "checks": [
+    {
+      "id": "V1_e1_metadata_buildable",
+      "name": "E1 业务项目元数据可建",
+      "result": "fail",
+      "details": "1.1=FAIL(FAIL), 6 必填字段全 OK"
+    },
+    {
+      "id": "V2_e2_schema_defineable",
+      "name": "E2 业务数据 schema 可定义",
+      "result": "fail",
+      "details": "1.1=0 实体, defined_by=biz_project/stored_by=pmo_instance 验证 OK"
+    },
+    {
+      "id": "V3_e3_glossary_buildable",
+      "name": "E3 业务术语表可建",
+      "result": "fail",
+      "details": "1.1=0 术语+0 角色, role 冲突=0 (DEC-2026-0003 边界)"
+    }
+  ],
+  "summary": {
+    "total": 3,
+    "passed": 0,
+    "failed": 3,
+    "pass_rate": "0.0%"
+  },
+  "acceptance_criteria": "3 项全部 pass, m2.1 通过",
+  "status": "partial"
+}

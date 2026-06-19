@@ -1,0 +1,29 @@
+{
+  "task": "m2.3",
+  "version": "v0.14.0",
+  "timestamp": "2026-06-19T12:57:00+08:00",
+  "total_tests": 25,
+  "passed": 25,
+  "failed": 0,
+  "tests": [
+    {
+      "name": "G1_5stage_templates",
+      "passed": true,
+      "count": 8,
+      "sub_pass": 8
+    },
+    {
+      "name": "G2_biz_agents_framework",
+      "passed": true,
+      "count": 6,
+      "sub_pass": 6
+    },
+    {
+      "name": "G3_5stage_activation",
+      "passed": true,
+      "count": 11,
+      "sub_pass": 11
+    }
+  ],
+  "overall": true
+}

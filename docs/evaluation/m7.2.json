@@ -1,0 +1,167 @@
+{
+  "task_id": "m7.2",
+  "title": "工具层评估报告",
+  "timestamp": "2026-06-19T06:32:02.876396+00:00",
+  "candidates": [
+    {
+      "name": "MCP (Model Context Protocol)",
+      "description": "标准工具协议",
+      "score": 9.0,
+      "pros": [
+        "生态大",
+        "标准化",
+        "多厂商支持"
+      ],
+      "cons": [
+        "刚兴起",
+        "工具质量参差"
+      ],
+      "timestamp": "2026-06-19T06:32:02.876396+00:00"
+    },
+    {
+      "name": "Tool Call (原生)",
+      "description": "LLM 原生工具调用",
+      "score": 8.5,
+      "pros": [
+        "延迟低",
+        "无额外依赖"
+      ],
+      "cons": [
+        "标准化弱",
+        "调试困难"
+      ],
+      "timestamp": "2026-06-19T06:32:02.876396+00:00"
+    },
+    {
+      "name": "LangChain Tools",
+      "description": "LangChain 工具生态",
+      "score": 7.5,
+      "pros": [
+        "生态丰富"
+      ],
+      "cons": [
+        "绑定 LangChain"
+      ],
+      "timestamp": "2026-06-19T06:32:02.876396+00:00"
+    },
+    {
+      "name": "CrewAI Tools",
+      "description": "CrewAI 工具集成",
+      "score": 7.0,
+      "pros": [
+        "CrewAI 集成好"
+      ],
+      "cons": [
+        "生态小"
+      ],
+      "timestamp": "2026-06-19T06:32:02.876396+00:00"
+    }
+  ],
+  "capabilities": [
+    {
+      "name": "PhaseGateValidator",
+      "status": "pass",
+      "detail": "P5-Self-Test 阶段门控验证",
+      "timestamp": "2026-06-19T06:32:02.876396+00:00"
+    },
+    {
+      "name": "ImmutableDocSigner",
+      "status": "pass",
+      "detail": "不可变文档 SHA256 签名",
+      "timestamp": "2026-06-19T06:32:02.876396+00:00"
+    },
+    {
+      "name": "DecisionLog",
+      "status": "pass",
+      "detail": "SQLite 决策日志",
+      "timestamp": "2026-06-19T06:32:02.876396+00:00"
+    },
+    {
+      "name": "SponsorDashboard",
+      "status": "pass",
+      "detail": "Sponsor 指标看板",
+      "timestamp": "2026-06-19T06:32:02.876396+00:00"
+    },
+    {
+      "name": "MetricsCollector",
+      "status": "pass",
+      "detail": "3 类指标采集 (业务/治理/工程)",
+      "timestamp": "2026-06-19T06:32:02.876396+00:00"
+    },
+    {
+      "name": "ReflectionManager",
+      "status": "pass",
+      "detail": "自进化反射",
+      "timestamp": "2026-06-19T06:32:02.876396+00:00"
+    },
+    {
+      "name": "ExceptionInterceptor",
+      "status": "pass",
+      "detail": "3 层异常拦截",
+      "timestamp": "2026-06-19T06:32:02.876396+00:00"
+    },
+    {
+      "name": "MessageBroker",
+      "status": "pass",
+      "detail": "项目间消息中介",
+      "timestamp": "2026-06-19T06:32:02.876396+00:00"
+    },
+    {
+      "name": "OperationsMonitor",
+      "status": "pass",
+      "detail": "运维监控 + 3 层告警",
+      "timestamp": "2026-06-19T06:32:02.876396+00:00"
+    },
+    {
+      "name": "SponsorNotifier",
+      "status": "pass",
+      "detail": "3 层通知 (简报/看板/即时)",
+      "timestamp": "2026-06-19T06:32:02.876396+00:00"
+    },
+    {
+      "name": "BizMetadataStore",
+      "status": "pass",
+      "detail": "E1/E2/E3 元数据存储",
+      "timestamp": "2026-06-19T06:32:02.876396+00:00"
+    },
+    {
+      "name": "PhaseGateValidator",
+      "status": "pass",
+      "detail": "7 项核心执行工具",
+      "timestamp": "2026-06-19T06:32:02.876396+00:00"
+    }
+  ],
+  "scopes": [
+    {
+      "scope": "AI PMO 治理工具",
+      "applicable": true,
+      "reason": "当前工具层专为 PMO 设计",
+      "timestamp": "2026-06-19T06:32:02.876396+00:00"
+    },
+    {
+      "scope": "多业务项目工具",
+      "applicable": true,
+      "reason": "工具按业务项目隔离",
+      "timestamp": "2026-06-19T06:32:02.876396+00:00"
+    },
+    {
+      "scope": "实时监控",
+      "applicable": true,
+      "reason": "OperationsMonitor + MetricsCollector",
+      "timestamp": "2026-06-19T06:32:02.876396+00:00"
+    }
+  ],
+  "recommendations": [
+    {
+      "type": "recommended",
+      "option": "MCP + 自研 PMO 工具层",
+      "score": 9.0,
+      "reason": "标准化 + PMO 特化, 生态可扩展"
+    }
+  ],
+  "summary": {
+    "candidate_count": 4,
+    "capability_count": 12,
+    "scope_count": 3
+  }
+}

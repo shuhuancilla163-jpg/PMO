@@ -1,0 +1,108 @@
+{
+  "task_id": "m7.3",
+  "title": "部署评估报告",
+  "timestamp": "2026-06-19T06:32:02.876458+00:00",
+  "candidates": [
+    {
+      "name": "Docker Compose",
+      "description": "单机器多容器编排",
+      "score": 8.0,
+      "pros": [
+        "简单",
+        "调试方便",
+        "成本低"
+      ],
+      "cons": [
+        "扩展性有限",
+        "无自愈"
+      ],
+      "timestamp": "2026-06-19T06:32:02.876458+00:00"
+    },
+    {
+      "name": "Kubernetes",
+      "description": "生产级容器编排",
+      "score": 9.0,
+      "pros": [
+        "自愈/扩缩容/滚动升级"
+      ],
+      "cons": [
+        "复杂度高",
+        "成本大"
+      ],
+      "timestamp": "2026-06-19T06:32:02.876458+00:00"
+    },
+    {
+      "name": "Serverless (Vercel/Railway)",
+      "description": "无服务器部署",
+      "score": 7.0,
+      "pros": [
+        "零运维",
+        "按需付费"
+      ],
+      "cons": [
+        "状态管理难",
+        "冷启动延迟"
+      ],
+      "timestamp": "2026-06-19T06:32:02.876458+00:00"
+    },
+    {
+      "name": "Cursor Cloud",
+      "description": "Cursor IDE 云端",
+      "score": 8.5,
+      "pros": [
+        "与 IDE 深度集成",
+        "开箱即用"
+      ],
+      "cons": [
+        "平台锁定"
+      ],
+      "timestamp": "2026-06-19T06:32:02.876458+00:00"
+    }
+  ],
+  "capabilities": [
+    {
+      "name": "start.sh / stop.sh",
+      "status": "pass",
+      "detail": "本地一键启停脚本",
+      "timestamp": "2026-06-19T06:32:02.876458+00:00"
+    },
+    {
+      "name": "Dockerfile",
+      "status": "pass",
+      "detail": "容器化支持",
+      "timestamp": "2026-06-19T06:32:02.876458+00:00"
+    },
+    {
+      "name": "状态持久化",
+      "status": "pass",
+      "detail": "SQLite + JSON 文件",
+      "timestamp": "2026-06-19T06:32:02.876458+00:00"
+    },
+    {
+      "name": "消息持久化",
+      "status": "pass",
+      "detail": "append-only 审计日志",
+      "timestamp": "2026-06-19T06:32:02.876458+00:00"
+    },
+    {
+      "name": "灾备",
+      "status": "pass",
+      "detail": "OperationsMonitor.disaster_backup",
+      "timestamp": "2026-06-19T06:32:02.876458+00:00"
+    }
+  ],
+  "scopes": [],
+  "recommendations": [
+    {
+      "type": "recommended",
+      "option": "Docker Compose (MVP) → Kubernetes (生产)",
+      "score": 8.5,
+      "reason": "MVP 阶段简单高效, 生产阶段平滑迁移"
+    }
+  ],
+  "summary": {
+    "candidate_count": 4,
+    "capability_count": 5,
+    "scope_count": 0
+  }
+}

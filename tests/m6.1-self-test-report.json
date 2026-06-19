@@ -1,0 +1,31 @@
+{
+  "task": "m6.1",
+  "version": "v0.14.0",
+  "timestamp": "2026-06-19T14:10:00+08:00",
+  "total": 31,
+  "passed": 31,
+  "failed": 0,
+  "tests": [
+    {
+      "name": "M1_phase_gate",
+      "passed": true,
+      "count": 4
+    },
+    {
+      "name": "M2_metrics",
+      "passed": true,
+      "count": 21
+    },
+    {
+      "name": "M3_exception",
+      "passed": true,
+      "count": 3
+    },
+    {
+      "name": "M4_alerting",
+      "passed": true,
+      "count": 3
+    }
+  ],
+  "overall": true
+}

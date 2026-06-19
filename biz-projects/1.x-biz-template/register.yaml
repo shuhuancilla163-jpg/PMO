@@ -1,23 +1,23 @@
-# 业务项目注册
-# 业务项目接入 PMO 实例时填写
+# 业务项目注册 (E1, 空模板)
+# 具体业务项目创建时, AI Operator 填入具体内容
 
 biz_project:
-  id: "1.2-finance"
-  name: "量化金融业务项目"
-  type: "finance-quant"
+  id: "<project-id>"              # 具体业务项目 ID (Sponsor 给出)
+  name: "<project-name>"          # 具体业务项目名称
+  type: "<project-type>"          # 业务类型 (如 finance/ecommerce/health)
   version: "0.1.0"
   sponsor: "Sponsor"
-  registered_at: "2026-06-19"
+  registered_at: "<YYYY-MM-DD>"  # 具体业务项目创建日期
 
 # 业务项目 PMO 监管 (m2.6 7 项)
 pmo_supervision:
   enabled: true
-  state: "active"
+  state: "template"              # template 态, 具体项目创建后改为 active
   quota_4d:
-    token: "100K/day"
-    time: "24/7"
-    storage: "10GB"
-    concurrency: "10"
+    token: "<token-quota>"       # 具体业务项目填入
+    time: "<time-availability>"
+    storage: "<storage-quota>"
+    concurrency: "<max-concurrency>"
   isolation_3d:
     data: "full"
     config: "independent"
@@ -30,7 +30,7 @@ agent_categories:
     pmo_supervised: true
     location: "eng-roles/"
   biz_agents:
-    description: "业务需求运营 agent (业务自管, 0.0.14)"
+    description: "业务 agent (业务自管, 0.0.14)"
     pmo_supervised: false
     location: "biz-agents/"
 

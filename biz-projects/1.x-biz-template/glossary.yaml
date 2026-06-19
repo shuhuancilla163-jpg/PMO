@@ -1,0 +1,21 @@
+# 业务术语表 (E3, 空模板)
+# 具体业务项目创建时, AI Operator 基于 Sponsor 业务需求填入
+
+glossary_version: "1.0"
+business_project_id: "<project-id>"
+description: "<业务描述, 具体业务项目填入>"
+
+# 业务术语 (term)
+# 具体业务项目基于 Sponsor 业务需求定义
+terms: []
+
+# 业务 agent role (role)
+# 具体业务项目基于 Sponsor 业务需求定义
+# 注意: 不与 5 阶段研发 role 重名 (0.0.13 边界)
+roles: []
+
+# 说明
+# - terms: 业务领域中的术语定义 (如: P&L/回撤/VaR)
+# - roles: 业务 agent 角色 (如: Data-Engineer/Quant-Analyst)
+# - 每个 term/role 的字段定义参考 0.0.16 E3 规范
+# - 业务 agent role 不与 5 阶段研发 role 重名 (DEC-2026-0003 边界)

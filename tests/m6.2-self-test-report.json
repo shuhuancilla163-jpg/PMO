@@ -1,0 +1,31 @@
+{
+  "task": "m6.2",
+  "version": "v0.14.0",
+  "timestamp": "2026-06-19T14:10:00+08:00",
+  "total": 11,
+  "passed": 11,
+  "failed": 0,
+  "tests": [
+    {
+      "name": "N1_self_test_report",
+      "passed": true,
+      "count": 3
+    },
+    {
+      "name": "N2_metrics_dashboard",
+      "passed": true,
+      "count": 3
+    },
+    {
+      "name": "N3_sponsor_brief",
+      "passed": true,
+      "count": 2
+    },
+    {
+      "name": "N4_sponsor_inbox",
+      "passed": true,
+      "count": 3
+    }
+  ],
+  "overall": true
+}

@@ -1,26 +1,26 @@
 {
   "version": "0.12.0",
   "decision": "DEC-2026-0005",
-  "test_date": "2026-06-19T02:16:57.633974+00:00",
+  "test_date": "2026-06-19T04:49:14.713159+00:00",
   "task": "m2.1 业务元数据 3 项",
   "checks": [
     {
       "id": "V1_e1_metadata_buildable",
       "name": "E1 业务项目元数据可建",
       "result": "pass",
-      "details": "1.1=1.1-pmo-self(PMO 系统自建), 1.2=1.2-finance(量化金融业务项目), 6 必填字段全 OK"
+      "details": "1.1=1.1-pmo-self(PMO 系统自建), 6 必填字段全 OK"
     },
     {
       "id": "V2_e2_schema_defineable",
       "name": "E2 业务数据 schema 可定义",
       "result": "pass",
-      "details": "1.1=3 实体, 1.2=4 实体, defined_by=biz_project/stored_by=pmo_instance 验证 OK"
+      "details": "1.1=3 实体, defined_by=biz_project/stored_by=pmo_instance 验证 OK"
     },
     {
       "id": "V3_e3_glossary_buildable",
       "name": "E3 业务术语表可建",
       "result": "pass",
-      "details": "1.1=7 术语+5 角色, 1.2=8 术语+6 角色, role 冲突=0 (DEC-2026-0003 边界)"
+      "details": "1.1=7 术语+5 角色, role 冲突=0 (DEC-2026-0003 边界)"
     }
   ],
   "summary": {

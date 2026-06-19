@@ -4,7 +4,199 @@
 
 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
-## [0.12.0] - 2026-06-19
+## [0.14.0] - 2026-06-19
+
+### Added (m2.3 5 阶段 agent + m2.4 业务执行层骨架, DEC-2026-0007 框架态)
+
+#### m2.3: 5 阶段 agent + biz-agents 骨架
+- templates/eng-roles/ (7 文件, 5 份模板)
+- biz-projects/1.1-pmo-self/eng-roles/ (5 agent 可激活)
+- scripts/runtime/m2_3_self_test.py (25/25 pass)
+- docs/m2.3-biz-agents-and-eng-roles.md (新建)
+
+#### m2.4: 业务执行层骨架 4 项
+- templates/biz-docs/ (5 份 SOP 模板)
+  - 01-biz-requirements.template.md ✅
+  - 02-biz-design.template.md ✅
+  - 03-biz-flow.template.md ✅
+  - 04-exception-handling.template.md ✅ (4 类异常)
+  - 04-release-notes.template.md ✅
+- 1.x-biz-template/biz-docs/03-implementation/biz-flow.md (回滚+流编排接口)
+- scripts/runtime/m2_4_self_test.py (16/16 pass)
+
+### Added (m2.5 + m2.6 业务项目)
+
+#### m2.5: 跨边界契约骨架 3 项
+- templates/ 契约模板 (J1: 3 份)
+- contract-biz-external-interface.md (J2: 对外接口)
+- Message-Broker-Agent + m1.6 (J3: m1.6 覆盖)
+- scripts/runtime/m2_5_self_test.py (9/9 pass)
+
+#### m2.6: 业务项目管理 14 项
+- biz-data/ 归档 4 层目录 (archive/metrics/knowledge/tasks)
+- scripts/runtime/m2_6_self_test.py (14/14 pass)
+- docs/m2.6-biz-project-management.md
+
+### Added (m2.6 + m2.7 接入流程)
+
+#### m2.6: 业务项目管理 14 项
+- biz-data/ 归档 4 层目录 (archive/metrics/knowledge/tasks)
+- scripts/runtime/m2_6_self_test.py (14/14 pass)
+- docs/m2.6-biz-project-management.md
+
+#### m2.7: 业务项目接入流程 5 步
+- docs/biz-project-onboarding-5-steps.md (5 步流程, 5254 bytes)
+- scripts/runtime/m2_7_self_test.py (16/16 pass)
+- docs/m2.7-biz-onboarding-5-steps.md
+
+### Added (m2.6 + m2.7 接入流程)
+
+#### m2.6: 业务项目管理 14 项
+- biz-data/ 归档 4 层目录 (archive/metrics/knowledge/tasks)
+- scripts/runtime/m2_6_self_test.py (14/14 pass)
+- docs/m2.6-biz-project-management.md
+
+#### m2.7: 业务项目接入流程 5 步
+- docs/biz-project-onboarding-5-steps.md (5 步流程, 5254 bytes)
+- scripts/runtime/m2_7_self_test.py (16/16 pass)
+- docs/m2.7-biz-onboarding-5-steps.md
+
+### Added (m6.1 PMO MVP 端到端)
+
+#### m6.1: PMO MVP 端到端自测
+- scripts/runtime/m6_1_self_test.py (31/31 pass)
+  - M1: 阶段门控 (3/3 流转 + PhaseGateValidator)
+  - M2: 3 类指标 (5+8+8=21 项 + 看板)
+  - M3: 3 层异常拦截 (L2 业务 + L1 PMO)
+  - M4: 3 层告警 (L1 业务自给 + L2 PMO + L3 Sponsor)
+- docs/m6.1-mvp-end-to-end.md
+
+### Verification
+- m2.3 自测: 25/25 pass 100%
+- m2.4 自测: 16/16 pass 100%
+- m2.5 自测: 9/9 pass 100%
+- m2.6 自测: 14/14 pass 100%
+- m2.7 自测: 16/16 pass 100%
+- m6.1 自测: 31/31 pass 100%
+- m6.2 自测: 11/11 pass 100%
+- M7 自测: 7/7 pass 100%
+- M1.5 自检: 24/25 pass 96.0% (D20+D21+D22+D23+D24+D25 ✅)
+
+### M7 工程实现层评估 (v0.14.0)
+- docs/evaluation/ (m7.1~m7.6 6 份 JSON 报告, 共 ~21KB)
+- scripts/runtime/evaluation/evaluation.py (评估框架)
+- scripts/runtime/m7_self_test.py (7/7 pass)
+- docs/M7-engineering-evaluation.md (汇总)
+
+
+
+
+
+- 5 阶段 agent: 全部可实例化, stage 属性正确 ✅
+
+### 关键决策
+- **DEC-2026-0007**: 框架态重构 (2026-06-19, v0.13.1)
+- m2.3: 5 阶段 agent 框架可激活, biz-agents 框架结构正确
+- 框架态: PMO 只管治理骨架, 具体业务 domain 由 Sponsor 后续注入
+
+
+
+### Added (DEC-2026-0007 框架态重构, Sponsor 反馈)
+
+**核心修正**: 清除预置业务 agent, 改为通用骨架模板。
+
+#### 框架态重构
+- **重构前**: `1.2-finance` 预置了 6 个量化金融 agent (Quant-Analyst/Risk-Manager/Portfolio-Manager 等), 属于历史包袱
+- **重构后**:
+  - `1.2-finance` → `1.x-biz-template` (通用业务项目骨架模板, 框架态)
+  - 量化 agent 移入 `1.x-examples/quant-finance/` (仅供参考历史示例)
+  - register.yaml / data-schema.yaml / glossary.yaml 改为空模板态
+  - biz-docs/ 量化内容删除, 改为框架态占位
+  - biz-agents/ 目录清空, 只留 README.md 框架说明
+
+#### 框架态原则
+- **PMO 框架不管具体业务 domain**
+- **具体业务 domain 由 Sponsor 后续注入**
+- **1.x-examples/ 只是参考, 不是框架**
+
+#### 自检调整
+- D18 (业务元数据): 只检查 active 项目 (1.1-pmo-self), 不检查 template 项目
+- D19 (业务不可变文档): 只检查 active 项目 F5 (版本管理), template 项目只检查 F1 (骨架)
+
+### Verification
+- m2.1 自测: 3/3 pass 100%
+- m2.2 自测: 25/25 pass 100%
+- M1.5 自检: 18/19 pass 94.7% (0 fail)
+
+### 关键决策
+- **DEC-2026-0007**: 框架态重构 (2026-06-19, v0.13.1)
+- 量化 agent 从框架移到参考示例
+- PMO 框架只管治理骨架, 不管具体业务实现
+- 影响: m2.3/m2.4/m2.5/m2.6 全部从通用骨架出发, 不绑定量化
+
+## [0.13.0] - 2026-06-19
+
+### Added (m2.2 业务不可变文档 2 项, DEC-2026-0006, 16 → 17 元规则)
+
+**核心完成**: M2 业务基础设施第二项, 业务产出文档规范化 + 版本化管理。
+
+#### 元规则 (16 → 17)
+- immutable/0-governance/0.0.17-biz-immutable-docs.md (新建)
+  - F1: 4 类业务文档骨架 (01-requirements/ / 02-design/ / 03-implementation/ / 04-release/)
+  - F5: Git tag/release + semver 版本管理
+  - 两层不可变文档分离 (PMO 治理 vs 业务产出)
+  - biz-docs 与 5 阶段研发的关系
+- immutable/0-governance/README.md (更新, 17 项元规则索引)
+
+#### 业务不可变文档 2 项 (m2.2)
+- scripts/runtime/biz_version_store/biz_version_store.py (新建, 260 行)
+  - BizVersionStore: 业务项目版本管理
+  - release() / next_minor() / next_major()
+  - parse_tag() 支持含 . 的 biz_id (如 1.2-finance)
+  - compare_versions() semver 比较
+  - 版本存储: config/biz-meta/<id>-versions.json
+- scripts/runtime/biz_version_store/m2_2_self_test.py (新建)
+  - F1: 业务不可变文档骨架 18/18 pass
+  - F5: 版本管理 14/14 pass
+  - 输出 tests/m2.2-self-test-report.json
+- biz-projects/1.2-finance/biz-docs/ (新建, 8 文件)
+  - 01-requirements/biz-requirements.md (1715 bytes)
+  - 02-design/biz-design.md + api-contract.md
+  - 03-implementation/biz-flow.md + exception-handling.md
+  - 04-release/release-notes.md + deployment.md
+- biz-projects/1.1-pmo-self/biz-docs/ (新建, 4 文件)
+  - biz-requirements.md + biz-design.md + biz-flow.md + release-notes.md
+- biz-projects/templates/biz-docs/README.md (新建)
+  - 业务项目 biz-docs 使用模板
+- scripts/runtime/self_check/self_check.py (更新)
+  - D19 业务不可变文档自检
+  - 18/19 pass 94.7%
+- docs/m2.2-biz-immutable-docs.md (新建)
+  - F1 文档骨架验收 + F5 版本管理验收 + 两层分离 + 与 m2.1 关系
+
+#### 决策 + 版本
+- decisions/active/DEC-2026-0006.json (新建)
+  - 4 块关键设计: F1/F5 + 两层分离 + biz-docs 与 5 阶段关系
+  - release_version: v0.13.0
+
+### Changed
+- 16 元规则 → 17 元规则 (新增 0.0.17)
+- 业务产出文档规范化 (biz-docs/ 4 类)
+
+### Verification
+- m2.2 自测: 32/32 pass 100%
+- M1.5 自检: 18/19 pass 94.7% (D19 接入 ✅)
+- biz-docs 文档: 1.1 (4 篇) + 1.2 (8 篇) 全部存在
+- semver 演进: v1.0.0 → v1.0.1 → v1.1.0 → v2.0.0 正确
+
+### 关键决策
+- **DEC-2026-0006**: 业务不可变文档 2 项 (2026-06-19, v0.13.0)
+- F1: 4 类文档骨架 (需求/设计/实施/发布)
+- F5: Git tag/release + semver 版本管理
+- 两层分离: PMO 治理不可变 vs 业务产出不可变
+- 影响: m2.4 业务 SOP (biz-flow.md) / m2.5 跨边界契约 (api-contract.md)
+
+
 
 ### Added (m2.1 业务元数据 3 项, DEC-2026-0005, 15 → 16 元规则)
 

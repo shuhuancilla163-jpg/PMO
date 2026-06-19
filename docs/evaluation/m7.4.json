@@ -1,0 +1,130 @@
+{
+  "task_id": "m7.4",
+  "title": "模型评估报告",
+  "timestamp": "2026-06-19T06:32:02.876488+00:00",
+  "candidates": [
+    {
+      "name": "Claude (Anthropic)",
+      "description": "强推理 + 长上下文",
+      "score": 9.0,
+      "pros": [
+        "推理强",
+        "上下文长",
+        "安全对齐好"
+      ],
+      "cons": [
+        "成本高",
+        "速率限制"
+      ],
+      "timestamp": "2026-06-19T06:32:02.876488+00:00"
+    },
+    {
+      "name": "GPT-4o (OpenAI)",
+      "description": "通用能力强",
+      "score": 8.5,
+      "pros": [
+        "生态大",
+        "工具调用好",
+        "多模态"
+      ],
+      "cons": [
+        "推理略弱",
+        "上下文限制"
+      ],
+      "timestamp": "2026-06-19T06:32:02.876488+00:00"
+    },
+    {
+      "name": "Gemini (Google)",
+      "description": "长上下文 + 多模态",
+      "score": 8.0,
+      "pros": [
+        "100万 token",
+        "性价比好"
+      ],
+      "cons": [
+        "工具调用生态弱"
+      ],
+      "timestamp": "2026-06-19T06:32:02.876488+00:00"
+    },
+    {
+      "name": "o3 (OpenAI)",
+      "description": "推理专精",
+      "score": 8.5,
+      "pros": [
+        "推理最强",
+        "复杂任务好"
+      ],
+      "cons": [
+        "成本极高",
+        "延迟大"
+      ],
+      "timestamp": "2026-06-19T06:32:02.876488+00:00"
+    },
+    {
+      "name": "DeepSeek",
+      "description": "开源性价比",
+      "score": 7.5,
+      "pros": [
+        "开源可私有",
+        "成本低"
+      ],
+      "cons": [
+        "生态较小",
+        "对齐较弱"
+      ],
+      "timestamp": "2026-06-19T06:32:02.876488+00:00"
+    }
+  ],
+  "capabilities": [
+    {
+      "name": "多 agent 协调",
+      "status": "pass",
+      "detail": "当前支持 8 个 PMO agent",
+      "timestamp": "2026-06-19T06:32:02.876488+00:00"
+    },
+    {
+      "name": "长上下文",
+      "status": "pass",
+      "detail": "biz-docs/biz-data 全量上下文",
+      "timestamp": "2026-06-19T06:32:02.876488+00:00"
+    },
+    {
+      "name": "工具调用",
+      "status": "pass",
+      "detail": "MCP + 自研 12 项工具",
+      "timestamp": "2026-06-19T06:32:02.876488+00:00"
+    },
+    {
+      "name": "代码生成",
+      "status": "pass",
+      "detail": "Engineer-Agent + 5 阶段 agent",
+      "timestamp": "2026-06-19T06:32:02.876488+00:00"
+    },
+    {
+      "name": "推理规划",
+      "status": "pass",
+      "detail": "Plan-Agent + ReflectionManager",
+      "timestamp": "2026-06-19T06:32:02.876488+00:00"
+    }
+  ],
+  "scopes": [],
+  "recommendations": [
+    {
+      "type": "recommended",
+      "option": "Claude Opus 4 (主) + GPT-4o (备)",
+      "score": 9.0,
+      "reason": "Claude 推理 + Plan, GPT-4o 工具调用 + 代码生成"
+    },
+    {
+      "type": "budget_option",
+      "option": "Claude Sonnet 4 + DeepSeek",
+      "score": 8.0,
+      "reason": "性价比方案, 主力 Sonnet, 复杂任务 DeepSeek"
+    }
+  ],
+  "summary": {
+    "candidate_count": 5,
+    "capability_count": 5,
+    "scope_count": 0
+  }
+}

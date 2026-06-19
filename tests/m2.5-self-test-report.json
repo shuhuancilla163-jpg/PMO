@@ -1,0 +1,29 @@
+{
+  "task": "m2.5",
+  "version": "v0.14.0",
+  "timestamp": "2026-06-19T13:05:00+08:00",
+  "total_tests": 9,
+  "passed": 9,
+  "failed": 0,
+  "tests": [
+    {
+      "name": "J1_pmo_biz_contracts",
+      "passed": true,
+      "count": 3,
+      "sub_pass": 3
+    },
+    {
+      "name": "J2_biz_external_interface",
+      "passed": true,
+      "count": 5,
+      "sub_pass": 5
+    },
+    {
+      "name": "J3_message_broker_m16",
+      "passed": true,
+      "count": 1,
+      "sub_pass": 1
+    }
+  ],
+  "overall": true
+}

@@ -1,0 +1,67 @@
+{
+  "task": "m2.6",
+  "version": "v0.14.0",
+  "timestamp": "2026-06-19T13:05:00+08:00",
+  "total": 14,
+  "passed": 14,
+  "failed": 0,
+  "results": [
+    {
+      "id": "K1",
+      "passed": true
+    },
+    {
+      "id": "K2",
+      "passed": true
+    },
+    {
+      "id": "K3",
+      "passed": true
+    },
+    {
+      "id": "K4",
+      "passed": true
+    },
+    {
+      "id": "K5",
+      "passed": true
+    },
+    {
+      "id": "K6",
+      "passed": true
+    },
+    {
+      "id": "K7",
+      "passed": true
+    },
+    {
+      "id": "K8",
+      "passed": true
+    },
+    {
+      "id": "K9",
+      "passed": true
+    },
+    {
+      "id": "K10",
+      "passed": true
+    },
+    {
+      "id": "K11",
+      "passed": true
+    },
+    {
+      "id": "K12",
+      "passed": true
+    },
+    {
+      "id": "K13",
+      "passed": true
+    },
+    {
+      "id": "K14",
+      "passed": true
+    }
+  ],
+  "overall": true
+}

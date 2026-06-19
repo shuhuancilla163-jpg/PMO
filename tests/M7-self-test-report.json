@@ -1,0 +1,39 @@
+{
+  "task": "M7",
+  "version": "v0.14.0",
+  "timestamp": "2026-06-19T14:29:00+08:00",
+  "total": 7,
+  "passed": 7,
+  "failed": 0,
+  "overall": true,
+  "checks": [
+    {
+      "name": "框架",
+      "passed": true
+    },
+    {
+      "name": "m7.1",
+      "passed": true
+    },
+    {
+      "name": "m7.2",
+      "passed": true
+    },
+    {
+      "name": "m7.3",
+      "passed": true
+    },
+    {
+      "name": "m7.4",
+      "passed": true
+    },
+    {
+      "name": "m7.5",
+      "passed": true
+    },
+    {
+      "name": "m7.6",
+      "passed": true
+    }
+  ]
+}

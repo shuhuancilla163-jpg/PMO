@@ -1,0 +1,34 @@
+[
+  {
+    "tag": "biz.1.1-pmo-self.v1.0.0",
+    "version": "v1.0.0",
+    "phase": "requirement",
+    "commit": "HEAD",
+    "date": "2026-06-19",
+    "notes": "init"
+  },
+  {
+    "tag": "biz.1.1-pmo-self.v1.0.1",
+    "version": "v1.0.1",
+    "phase": "development",
+    "commit": "HEAD",
+    "date": "2026-06-19",
+    "notes": "design"
+  },
+  {
+    "tag": "biz.1.1-pmo-self.v1.1.0",
+    "version": "v1.1.0",
+    "phase": "evaluation",
+    "commit": "HEAD",
+    "date": "2026-06-19",
+    "notes": "new feature"
+  },
+  {
+    "tag": "biz.1.1-pmo-self.v2.0.0",
+    "version": "v2.0.0",
+    "phase": "evaluation",
+    "commit": "HEAD",
+    "date": "2026-06-19",
+    "notes": "breaking change"
+  }
+]

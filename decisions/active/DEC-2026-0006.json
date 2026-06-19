@@ -1,0 +1,68 @@
+{
+  "id": "DEC-2026-0006",
+  "title": "业务不可变文档 2 项 (m2.2)",
+  "date": "2026-06-19",
+  "author": "AI Operator (Engineer-Agent)",
+  "reviewer": "Sponsor",
+  "status": "active",
+  "task": "m2.2",
+  "version": "v0.13.0",
+  "summary": "定义业务不可变文档 2 项 (F1/F5): 业务不可变文档骨架 + Git tag/release + semver 版本管理。业务不可变文档是业务项目的业务产出文档, 与 PMO 治理不可变文档是两个独立层级。",
+  "background": "业务项目接入 PMO 后, 需要产出业务文档并版本化管理。当前 biz-projects/1.1/1.2 有部分文档但无统一规范。m2.1 已完成 (E1/E2/E3), m2.2 需要在此基础上建立业务不可变文档规范。",
+  "decisions": [
+    {
+      "id": 1,
+      "title": "F1 业务不可变文档骨架",
+      "description": "业务项目必须有 biz-docs/ 目录, 包含 4 类文档 (01-requirements/ 02-design/ 03-implementation/ 04-release/), 基于 m2.1 E2 data-schema + E3 glossary 产出。文档以 Git commit 为时间戳, 不可变。",
+      "rationale": "统一业务项目文档产出, 保证 PMO 可监管业务文档完整性"
+    },
+    {
+      "id": 2,
+      "title": "F5 业务版本管理",
+      "description": "业务项目版本遵循 semver (v<MAJOR>.<MINOR>.<PATCH>), Git tag 格式 biz.<biz_id>.v<MAJOR>.<MINOR>.<PATCH>, 存储在 config/biz-meta/<id>-versions.json。MAJOR=破坏性变更 / MINOR=新增 / PATCH=修复。",
+      "rationale": "业务项目版本化管理, 支持回溯和对比"
+    },
+    {
+      "id": 3,
+      "title": "两层不可变文档分离",
+      "description": "PMO 不可变文档 (immutable/0-governance/) 管治理, 业务不可变文档 (biz-projects/<id>/biz-docs/) 管业务产出。两者独立, 不互相覆盖。",
+      "rationale": "分离治理和业务关注点, 避免层级混淆"
+    },
+    {
+      "id": 4,
+      "title": "biz-docs 与 5 阶段的关系",
+      "description": "biz-docs 4 类文档与 5 阶段研发对应: requirement→01-requirements/, development→02-design/+03-implementation/, operations→04-release/, evaluation→版本评审。每个阶段至少产出一篇文档。",
+      "rationale": "biz-docs 文档与研发阶段对齐, 保证可追溯"
+    }
+  ],
+  "impact": {
+    "meta_rules": "16 → 17 元规则 (新增 0.0.17)",
+    "modules": ["biz_version_store.py", "biz-docs/ 目录结构"],
+    "upstream": ["m2.1 (E1/E2/E3 是 biz-docs 的基础)", "m1.6 (biz-docs 中的消息流依赖 Message-Broker)"],
+    "downstream": ["m2.4 (biz-flow.md 是 m2.4 业务 SOP 的前身)", "m2.5 (api-contract.md 是 m2.5 跨边界契约的前身)", "m2.6 (biz-docs 进入归档)"]
+  },
+  "file_changes": {
+    "new": [
+      "immutable/0-governance/0.0.17-biz-immutable-docs.md",
+      "biz-projects/1.1-pmo-self/biz-docs/*",
+      "biz-projects/1.2-finance/biz-docs/*",
+      "biz-projects/templates/biz-docs/README.md",
+      "scripts/runtime/biz_version_store/biz_version_store.py",
+      "scripts/runtime/biz_version_store/m2_2_self_test.py",
+      "docs/m2.2-biz-immutable-docs.md"
+    ],
+    "updated": [
+      "immutable/0-governance/README.md (16→17 项)",
+      "scripts/runtime/self_check/self_check.py (D19)",
+      "versions/CHANGELOG.md (v0.13.0)"
+    ]
+  },
+  "verification": {
+    "m2_2_self_test": "32/32 pass",
+    "m1_5_self_check": "18/19 pass (D19 ✅)",
+    "f1_check": "biz-docs/ 4 类文档在 1.1/1.2 全部存在",
+    "f5_check": "semver 演进正确 (v1.0.0→v1.0.1→v1.1.0→v2.0.0)"
+  },
+  "release_version": "v0.13.0",
+  "meta_rule": "0.0.17"
+}

@@ -1,0 +1,26 @@
+# PMO Sponsor 通知配置
+# 路径: config/notify.yaml
+
+sponsor_notify:
+  # Webhook 推送配置
+  webhook:
+    enabled: false          # 设为 true 启用 Webhook 推送
+    url: ""                 # 填写你的 Webhook URL (如: http://localhost:8080/webhook, Slack Incoming Webhook, etc.)
+    timeout: 10             # 超时秒数
+    retry: 3                # 失败重试次数
+
+  # 磁盘持久化
+  persistence:
+    enabled: true
+    inbox_file: "logs/notify/inbox.json"
+
+  # 通知过滤规则
+  rules:
+    # 什么级别的通知进 Sponsor 收件箱
+    inbox_triggers:
+      - channel: "instant"
+      - severity: "critical"
+    # 什么级别的通知触发 Webhook 推送
+    webhook_triggers:
+      - channel: "instant"
+      - severity: "critical"

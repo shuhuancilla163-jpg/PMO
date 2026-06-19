@@ -586,14 +586,12 @@ if __name__ == "__main__":
             print(f"    - {k}: {v}")
     print()
 
-    # 2. 业务项目 1.2-finance 接入
-    print("[2] 业务项目 1.2-finance 接入 (E1+E2+E3)")
-    result = store.onboard_biz_project("1.2-finance")
-    if result["success"]:
-        print(f"  - 1.2-finance 接入成功")
-        print(f"  - 步骤: {list(result['steps'].keys())}")
-    else:
-        print(f"  - 1.2-finance 接入失败: {result.get('error')}")
+    # 2. 业务项目 1.x-biz-template 框架态说明
+    print("[2] 业务项目 1.x-biz-template (框架态)")
+    print("  - 1.x-biz-template 是通用业务项目骨架模板")
+    print("  - 具体业务 domain 由 Sponsor 后续注入")
+    print("  - 不参与 E1/E2/E3 验证 (template 状态)")
+    print("  - 具体业务示例在 1.x-examples/quant-finance/ (仅供参考)")
     print()
 
     # 3. 查询元数据

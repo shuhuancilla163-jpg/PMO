@@ -1,0 +1,139 @@
+{
+  "task_id": "m7.5",
+  "title": "存储评估报告",
+  "timestamp": "2026-06-19T06:32:02.876528+00:00",
+  "candidates": [
+    {
+      "name": "SQLite",
+      "description": "嵌入式关系数据库",
+      "score": 8.5,
+      "pros": [
+        "零运维",
+        "事务支持",
+        "轻量"
+      ],
+      "cons": [
+        "并发弱",
+        "非分布式"
+      ],
+      "timestamp": "2026-06-19T06:32:02.876528+00:00"
+    },
+    {
+      "name": "PostgreSQL",
+      "description": "生产级关系数据库",
+      "score": 9.0,
+      "pros": [
+        "ACID",
+        "并发强",
+        "生态大"
+      ],
+      "cons": [
+        "需要运维"
+      ],
+      "timestamp": "2026-06-19T06:32:02.876528+00:00"
+    },
+    {
+      "name": "Git (版本控制)",
+      "description": "不可变文档存储",
+      "score": 9.0,
+      "pros": [
+        "天然不可变",
+        "版本追溯"
+      ],
+      "cons": [
+        "结构化查询弱"
+      ],
+      "timestamp": "2026-06-19T06:32:02.876528+00:00"
+    },
+    {
+      "name": "文件系统 (JSON)",
+      "description": "业务数据存储",
+      "score": 7.0,
+      "pros": [
+        "简单",
+        "人类可读"
+      ],
+      "cons": [
+        "无事务",
+        "查询弱"
+      ],
+      "timestamp": "2026-06-19T06:32:02.876528+00:00"
+    },
+    {
+      "name": "向量数据库 (Pinecone/Milvus)",
+      "description": "RAG 向量存储",
+      "score": 7.5,
+      "pros": [
+        "语义搜索"
+      ],
+      "cons": [
+        "与 PMO 当前架构不直接相关"
+      ],
+      "timestamp": "2026-06-19T06:32:02.876528+00:00"
+    }
+  ],
+  "capabilities": [
+    {
+      "name": "决策日志 (SQLite)",
+      "status": "pass",
+      "detail": "DecisionLog.decision.db",
+      "timestamp": "2026-06-19T06:32:02.876528+00:00"
+    },
+    {
+      "name": "不可变文档 (Git)",
+      "status": "pass",
+      "detail": "immutable/ + SHA256 签名",
+      "timestamp": "2026-06-19T06:32:02.876528+00:00"
+    },
+    {
+      "name": "业务数据 (JSON)",
+      "status": "pass",
+      "detail": "biz-projects/ 项目数据",
+      "timestamp": "2026-06-19T06:32:02.876528+00:00"
+    },
+    {
+      "name": "消息审计 (JSON append)",
+      "status": "pass",
+      "detail": "append-only 审计日志",
+      "timestamp": "2026-06-19T06:32:02.876528+00:00"
+    },
+    {
+      "name": "状态持久化 (JSON)",
+      "status": "pass",
+      "detail": "state/ 状态机历史",
+      "timestamp": "2026-06-19T06:32:02.876528+00:00"
+    },
+    {
+      "name": "指标存储 (MetricsCollector)",
+      "status": "pass",
+      "detail": "内存 + JSON 导出",
+      "timestamp": "2026-06-19T06:32:02.876528+00:00"
+    },
+    {
+      "name": "元数据存储 (BizMetadataStore)",
+      "status": "pass",
+      "detail": "config/biz-meta/*.json",
+      "timestamp": "2026-06-19T06:32:02.876528+00:00"
+    }
+  ],
+  "scopes": [],
+  "recommendations": [
+    {
+      "type": "recommended",
+      "option": "SQLite (决策) + Git (文档) + 文件系统 (数据)",
+      "score": 9.0,
+      "reason": "当前 MVP 完美匹配, 零运维"
+    },
+    {
+      "type": "future_upgrade",
+      "option": "PostgreSQL (生产)",
+      "score": 8.5,
+      "reason": "业务项目数 > 10 时升级"
+    }
+  ],
+  "summary": {
+    "candidate_count": 5,
+    "capability_count": 7,
+    "scope_count": 0
+  }
+}

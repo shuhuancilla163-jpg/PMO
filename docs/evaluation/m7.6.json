@@ -1,0 +1,111 @@
+{
+  "task_id": "m7.6",
+  "title": "PMO 工程实现层推荐报告",
+  "timestamp": "2026-06-19T06:32:02.876556+00:00",
+  "candidates": [
+    {
+      "name": "agent 框架",
+      "description": "Cursor SDK + PMOAgent 基类",
+      "score": 9.0,
+      "pros": [],
+      "cons": [],
+      "timestamp": "2026-06-19T06:32:02.876556+00:00"
+    },
+    {
+      "name": "工具层",
+      "description": "MCP + 自研 12 项 PMO 工具",
+      "score": 9.0,
+      "pros": [],
+      "cons": [],
+      "timestamp": "2026-06-19T06:32:02.876556+00:00"
+    },
+    {
+      "name": "部署",
+      "description": "Docker Compose (MVP) → Kubernetes (生产)",
+      "score": 8.5,
+      "pros": [],
+      "cons": [],
+      "timestamp": "2026-06-19T06:32:02.876556+00:00"
+    },
+    {
+      "name": "模型",
+      "description": "Claude Opus 4 (主) + GPT-4o (备)",
+      "score": 9.0,
+      "pros": [],
+      "cons": [],
+      "timestamp": "2026-06-19T06:32:02.876556+00:00"
+    },
+    {
+      "name": "存储",
+      "description": "SQLite + Git + 文件系统",
+      "score": 9.0,
+      "pros": [],
+      "cons": [],
+      "timestamp": "2026-06-19T06:32:02.876556+00:00"
+    }
+  ],
+  "capabilities": [
+    {
+      "name": "agent 框架覆盖",
+      "status": "pass",
+      "detail": "8/8 PMO agent + biz-agents 框架态 (score: 9.0)",
+      "timestamp": "2026-06-19T06:32:02.876556+00:00"
+    },
+    {
+      "name": "工具层覆盖",
+      "status": "pass",
+      "detail": "12 项核心工具 + 3 层告警 + 3 层异常 (score: 9.0)",
+      "timestamp": "2026-06-19T06:32:02.876556+00:00"
+    },
+    {
+      "name": "部署就绪",
+      "status": "pass",
+      "detail": "Docker + start.sh/stop.sh (score: 8.0)",
+      "timestamp": "2026-06-19T06:32:02.876556+00:00"
+    },
+    {
+      "name": "模型就绪",
+      "status": "pass",
+      "detail": "多模型支持, Cursor SDK 集成 (score: 9.0)",
+      "timestamp": "2026-06-19T06:32:02.876556+00:00"
+    },
+    {
+      "name": "存储就绪",
+      "status": "pass",
+      "detail": "SQLite + Git + JSON, 零运维 (score: 9.0)",
+      "timestamp": "2026-06-19T06:32:02.876556+00:00"
+    },
+    {
+      "name": "自检覆盖率",
+      "status": "pass",
+      "detail": "M1.5 24/25 pass (96.0%) (score: 8.5)",
+      "timestamp": "2026-06-19T06:32:02.876556+00:00"
+    },
+    {
+      "name": "端到端覆盖",
+      "status": "pass",
+      "detail": "m6.1 31/31 pass, m6.2 11/11 pass (score: 9.0)",
+      "timestamp": "2026-06-19T06:32:02.876556+00:00"
+    }
+  ],
+  "scopes": [],
+  "recommendations": [
+    {
+      "type": "recommended_stack",
+      "option": "Cursor SDK + PMOAgent + MCP + Claude Opus 4 + Docker Compose + SQLite/Git",
+      "score": 9.0,
+      "reason": "完整技术栈, 零运维 MVP"
+    },
+    {
+      "type": "not_recommended_stack",
+      "option": "纯 LangChain + K8s + 自研模型",
+      "score": 5.0,
+      "reason": "过度工程化, 不适合当前阶段"
+    }
+  ],
+  "summary": {
+    "candidate_count": 5,
+    "capability_count": 7,
+    "scope_count": 0
+  }
+}

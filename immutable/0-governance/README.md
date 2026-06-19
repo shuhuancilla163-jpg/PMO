@@ -2,7 +2,7 @@
 
 **PMO 治理层不可变文档库** (Git 不可变, 修改需 Sponsor 授权 + DEC-2026-0002)
 
-## 16 项元规则 (DEC-2026-0005 后 15 → 16)
+## 17 项元规则 (DEC-2026-0006 后 16 → 17)
 
 | # | 文件 | 标题 | 关键 |
 |---|---|---|---|
@@ -22,6 +22,7 @@
 | **0.0.14** | [0.0.14-biz-ops-roles-self-define.md](./0.0.14-biz-ops-roles-self-define.md) | **业务需求运营 agent 自定原则 (DEC-2026-0003)** | 业务 agent 业务项目完全自定, PMO 不预设不干预 |
 | **0.0.15** | [0.0.15-inter-biz-messaging.md](./0.0.15-inter-biz-messaging.md) | **项目间消息流通 (DEC-2026-0004, m1.6)** | 业务项目间消息经 PMO Message-Broker 中介, 协议/主题/QoS/可监控/可审计 |
 | **0.0.16** | [0.0.16-biz-metadata-3-items.md](./0.0.16-biz-metadata-3-items.md) | **业务元数据 3 项 (DEC-2026-0005, m2.1)** | E1 register.yaml + E2 data-schema.yaml + E3 glossary.yaml, 业务项目自定, PMO 存 |
+| **0.0.17** | [0.0.17-biz-immutable-docs.md](./0.0.17-biz-immutable-docs.md) | **业务不可变文档 2 项 (DEC-2026-0006, m2.2)** | F1 biz-docs 骨架 + F5 Git tag/release + semver, 业务产出文档 |
 
 ## 不可变性 (Immutable)
 
@@ -55,3 +56,4 @@ Sponsor 推动 5 阶段 agent 修正, 增加 2 项元规则:
 - **DEC-2026-0003**: 5 阶段 agent 修正 (2026-06-19, 加 0.0.13/0.0.14)
 - **DEC-2026-0004**: 项目间消息流通 (2026-06-19, 加 0.0.15)
 - **DEC-2026-0005**: 业务元数据 3 项 (2026-06-19, 加 0.0.16)
+- **DEC-2026-0006**: 业务不可变文档 2 项 (2026-06-19, 加 0.0.17)

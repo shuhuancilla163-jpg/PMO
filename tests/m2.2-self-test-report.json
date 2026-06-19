@@ -1,0 +1,24 @@
+{
+  "task": "m2.2",
+  "version": "v0.13.0",
+  "decision": "DEC-2026-0006",
+  "timestamp": "2026-06-19T12:35:00+08:00",
+  "total_tests": 25,
+  "passed": 25,
+  "failed": 0,
+  "tests": [
+    {
+      "name": "F1_biz_docs_skeleton",
+      "passed": true,
+      "count": 18,
+      "sub_pass": 18
+    },
+    {
+      "name": "F5_version_management",
+      "passed": true,
+      "count": 7,
+      "sub_pass": 7
+    }
+  ],
+  "overall": true
+}

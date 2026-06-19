@@ -1,0 +1,19 @@
+# 业务数据模型 (E2, 空模板)
+# 具体业务项目创建时, AI Operator 基于 Sponsor 业务需求填入
+
+schema_version: "1.0"
+business_project_id: "<project-id>"
+description: "<业务描述, 具体业务项目填入>"
+
+# 业务实体 (entity)
+# 具体业务项目基于 Sponsor 业务需求定义
+entities: []
+
+# 业务事件 (event)
+# 具体业务项目基于 Sponsor 业务需求定义
+events: []
+
+# 说明
+# - entities: 业务领域中的核心概念 (如: 订单/用户/商品)
+# - events: 业务领域中的重要事件 (如: 订单创建/支付成功)
+# - 每个 entity/event 的字段定义参考 0.0.16 E2 规范

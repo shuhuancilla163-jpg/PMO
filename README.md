@@ -1,6 +1,6 @@
 # PMO 平台 (Project Management Office)
 
-**1 套 PMO 治理规范, 1 个 PMO 实例, N 个业务项目复用, 1 个 Sponsor 介入** (0.0.10)
+**1 套 PMO 治理规范, 1 个 PMO 实例, N 个业务项目复用, 1 个 Sponsor 介入** (0.0.10, 17 项元规则)
 
 ## 目录结构
 
@@ -41,7 +41,13 @@ PMO/
 │   └── schema.json        # 指标 schema
 ├── biz-projects/          # 业务项目
 │   ├── 1.1-pmo-self/      # 1.1 PMO 自建 (当前)
-│   ├── 1.2-biz/           # 1.2 业务 (未来)
+│   │   ├── biz-docs/      # 业务不可变文档 (m2.2)
+│   │   ├── eng-roles/     # 5 阶段研发 agent (0.0.13)
+│   │   └── biz-agents/    # 业务 agent (0.0.14)
+│   ├── 1.2-finance/       # 1.2 量化金融业务
+│   │   ├── biz-docs/      # 业务不可变文档 (m2.2)
+│   │   ├── eng-roles/     # 5 阶段研发 agent (0.0.13)
+│   │   └── biz-agents/    # 业务 agent (0.0.14)
 │   └── templates/         # 业务项目模板
 ├── prompts/               # agent prompts
 ├── hooks/                 # Cursor hooks (按需)

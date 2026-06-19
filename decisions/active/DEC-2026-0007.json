@@ -1,0 +1,66 @@
+{
+  "id": "DEC-2026-0007",
+  "title": "框架态重构: 清除预置业务, 改为通用骨架",
+  "date": "2026-06-19",
+  "author": "AI Operator (Engineer-Agent) + Sponsor Feedback",
+  "reviewer": "Sponsor",
+  "status": "active",
+  "task": "m2.3-pre",
+  "version": "v0.13.1",
+  "summary": "清除 1.2-finance 预置的量化金融业务 agent, 改为通用业务骨架模板, 符合'PMO 框架不管具体业务 domain'原则。",
+  "background": "Sponsor 反馈: '不要定义业务系统是量化系统预置流程, 这样会产生容易无用的历史数据, 后面改起来还麻烦。' 问题根源: 1.2-finance 里的 6 个量化 agent (Quant-Analyst/Risk-Manager/Portfolio-Manager 等) 是具体业务实现, 属于历史包袱, 不属于 PMO 框架本身。",
+  "decisions": [
+    {
+      "id": 1,
+      "title": "1.2-finance → 1.x-biz-template",
+      "description": "将 1.2-finance 重命名为 1.x-biz-template (通用业务项目骨架模板), 清除所有量化业务内容。register.yaml / data-schema.yaml / glossary.yaml 改为空模板态 (<> 占位符)。",
+      "rationale": "PMO 框架不管具体业务 domain, 具体 domain 由 Sponsor 后续注入"
+    },
+    {
+      "id": 2,
+      "title": "量化 agent 移入 1.x-examples/quant-finance/",
+      "description": "biz-agents/ 目录下的 6 个量化 agent 移到 1.x-examples/quant-finance/biz-agents/, 明确标注为'仅供参考的历史示例', 不是 PMO 框架的一部分。",
+      "rationale": "参考示例与框架分离, 避免历史包袱进入框架"
+    },
+    {
+      "id": 3,
+      "title": "biz-docs 改为框架态",
+      "description": "1.x-biz-template/biz-docs/ 下的所有量化业务文档删除, 改为框架态占位文件 (说明具体内容由具体业务项目填入)。",
+      "rationale": "框架不预置业务文档内容, 避免历史包袱"
+    },
+    {
+      "id": 4,
+      "title": "D18/D19 自检调整为只检查 active 项目",
+      "description": "m1.5 自检中的 D18 (业务元数据) 和 D19 (业务不可变文档) 只检查 active 状态业务项目 (1.1-pmo-self), 不检查 template 状态项目 (1.x-biz-template)。",
+      "rationale": "template 状态项目为空模板, 不参与元数据验证"
+    }
+  ],
+  "impact": {
+    "before": "1.2-finance 有量化金融预置 agent (Quant-Analyst/Risk-Manager 等), 属于历史包袱",
+    "after": "1.x-biz-template 是通用骨架, 量化 agent 移入 1.x-examples/quant-finance/ 参考示例",
+    "file_changes": {
+      "renamed": ["biz-projects/1.2-finance → biz-projects/1.x-biz-template"],
+      "moved": ["biz-agents/ → 1.x-examples/quant-finance/biz-agents/"],
+      "updated": [
+        "biz-projects/1.x-biz-template/register.yaml (框架态)",
+        "biz-projects/1.x-biz-template/data-schema.yaml (框架态)",
+        "biz-projects/1.x-biz-template/glossary.yaml (框架态)",
+        "biz-projects/1.x-biz-template/biz-agents/README.md (框架说明)",
+        "biz-projects/1.x-biz-template/biz-docs/ (框架态)",
+        "biz-projects/1.x-examples/quant-finance/README.md (参考示例说明)",
+        "config/pmo.config.yaml (项目列表更新)",
+        "scripts/runtime/self_check/self_check.py (D18/D19 只检查 active)",
+        "scripts/runtime/biz_metadata/m2_1_self_test.py (只检查 active)",
+        "scripts/runtime/biz_version_store/m2_2_self_test.py (只检查 active)"
+      ]
+    }
+  },
+  "verification": {
+    "m2_1_self_test": "3/3 pass",
+    "m2_2_self_test": "25/25 pass",
+    "m1_5_self_check": "18/19 pass (0 fail)",
+    "refactor_check": "1.x-biz-template 是框架态 ✅ / 1.x-examples/quant-finance 是参考示例 ✅"
+  },
+  "release_version": "v0.13.1",
+  "note": "本决策不增加元规则, 只调整项目结构和自检逻辑"
+}

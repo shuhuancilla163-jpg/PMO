@@ -1,0 +1,127 @@
+name: PMO Health Check & Feishu Alert
+
+on:
+  # 每小时检查一次，检测到异常立即推飞书
+  schedule:
+    - cron: "0 * * * *"
+  # 也可手动触发（GitHub 页面 → Actions → Run workflow）
+  workflow_dispatch:
+
+jobs:
+  pmo-health-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout PMO repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install pyyaml -q
+
+      - name: Run PMO Health Check
+        id: health
+        run: |
+          echo "=== PMO Health Check $(date -u '+%Y-%m-%dT%H:%M:%SZ') ==="
+          python3 scripts/runtime/pmo_self_test.py
+        env:
+          # GitHub Secrets 注入飞书配置（不进 Git）
+          FEISHU_WEBHOOK_ENABLED: ${{ secrets.FEISHU_WEBHOOK_ENABLED }}
+          FEISHU_WEBHOOK_URL: ${{ secrets.FEISHU_WEBHOOK_URL }}
+          FEISHU_WEBHOOK_SECRET: ${{ secrets.FEISHU_WEBHOOK_SECRET }}
+          # GitHub Actions 内置变量
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          GITHUB_RUN_NUMBER: ${{ github.run_number }}
+          GITHUB_WORKFLOW: ${{ github.workflow }}
+
+      - name: Extract self-test result
+        id: result
+        run: |
+          if grep -q "self_test.*PASS\|全部通过\|12/12" tests/m1-self-test-report.json 2>/dev/null || \
+             grep -q "✅" tests/m1-self-test-report.json 2>/dev/null; then
+            echo "status=ok" >> $GITHUB_OUTPUT
+          else
+            echo "status=fail" >> $GITHUB_OUTPUT
+          fi
+        continue-on-error: true
+
+      - name: Feishu alert on failure
+        if: steps.result.outputs.status == 'fail'
+        run: |
+          python3 -c "
+          import urllib.request, urllib.error, json, ssl, hmac, hashlib, base64, time
+
+          url = '${{ secrets.FEISHU_WEBHOOK_URL }}'
+          secret = '${{ secrets.FEISHU_WEBHOOK_SECRET }}'
+          timestamp = str(int(time.time()))
+          key = f'{timestamp}\n{secret}'
+          sign = base64.b64encode(hmac.new(key.encode('utf-8'), b'', hashlib.sha256).digest()).decode('utf-8')
+
+          payload = json.dumps({
+              'timestamp': timestamp,
+              'sign': sign,
+              'msg_type': 'post',
+              'content': {
+                  'post': {
+                      'zh_cn': {
+                          'title': '🔴 PMO 自检失败 — GitHub Actions',
+                          'content': [[
+                              {'tag': 'text', 'text': 'PMO Health Check 未通过，请检查 GitHub Actions 日志。'},
+                              {'tag': 'text', 'text': 'Run ID: ${{ github.run_id }}'},
+                              {'tag': 'text', 'text': '仓库: PMO'},
+                          ]]
+                      }
+                  }
+              }
+          }).encode('utf-8')
+
+          req = urllib.request.Request(url, data=payload, headers={'Content-Type': 'application/json'}, method='POST')
+          ctx = ssl.create_default_context()
+          with urllib.request.urlopen(req, timeout=10, context=ctx) as resp:
+              print('Feishu alert sent:', resp.read().decode())
+          "
+        env:
+          FEISHU_WEBHOOK_URL: ${{ secrets.FEISHU_WEBHOOK_URL }}
+          FEISHU_WEBHOOK_SECRET: ${{ secrets.FEISHU_WEBHOOK_SECRET }}
+
+      - name: Feishu ok notification
+        if: steps.result.outputs.status == 'ok'
+        run: |
+          python3 -c "
+          import urllib.request, urllib.error, json, ssl, hmac, hashlib, base64, time
+
+          url = '${{ secrets.FEISHU_WEBHOOK_URL }}'
+          secret = '${{ secrets.FEISHU_WEBHOOK_SECRET }}'
+          timestamp = str(int(time.time()))
+          key = f'{timestamp}\n{secret}'
+          sign = base64.b64encode(hmac.new(key.encode('utf-8'), b'', hashlib.sha256).digest()).decode('utf-8')
+
+          payload = json.dumps({
+              'timestamp': timestamp,
+              'sign': sign,
+              'msg_type': 'post',
+              'content': {
+                  'post': {
+                      'zh_cn': {
+                          'title': '✅ PMO Health Check 通过',
+                          'content': [[
+                              {'tag': 'text', 'text': 'GitHub Actions Run #${{ github.run_number }} — 全部检查通过'},
+                          ]]
+                      }
+                  }
+              }
+          }).encode('utf-8')
+
+          req = urllib.request.Request(url, data=payload, headers={'Content-Type': 'application/json'}, method='POST')
+          ctx = ssl.create_default_context()
+          with urllib.request.urlopen(req, timeout=10, context=ctx) as resp:
+              print('Feishu ok sent:', resp.read().decode())
+          "
+        env:
+          FEISHU_WEBHOOK_URL: ${{ secrets.FEISHU_WEBHOOK_URL }}
+          FEISHU_WEBHOOK_SECRET: ${{ secrets.FEISHU_WEBHOOK_SECRET }}

@@ -1,0 +1,178 @@
+{
+  "task_id": "m7.1",
+  "title": "agent 框架评估报告",
+  "timestamp": "2026-06-19T06:32:02.875512+00:00",
+  "candidates": [
+    {
+      "name": "LangChain",
+      "description": "基于 LLM 的 agent 编排框架",
+      "score": 8.5,
+      "pros": [
+        "生态丰富",
+        "工具集成好",
+        "社区活跃"
+      ],
+      "cons": [
+        "学习曲线陡",
+        "调试困难"
+      ],
+      "timestamp": "2026-06-19T06:32:02.875512+00:00"
+    },
+    {
+      "name": "CrewAI",
+      "description": "多 agent 协作框架",
+      "score": 8.0,
+      "pros": [
+        "专注 agent 协作",
+        "角色分离好"
+      ],
+      "cons": [
+        "生态较小",
+        "定制有限"
+      ],
+      "timestamp": "2026-06-19T06:32:02.875512+00:00"
+    },
+    {
+      "name": "AutoGen",
+      "description": "微软多 agent 对话框架",
+      "score": 7.5,
+      "pros": [
+        "对话能力强",
+        "微软支持"
+      ],
+      "cons": [
+        "复杂度高",
+        "资源消耗大"
+      ],
+      "timestamp": "2026-06-19T06:32:02.875512+00:00"
+    },
+    {
+      "name": "Cursor SDK",
+      "description": "Cursor Agent SDK",
+      "score": 9.0,
+      "pros": [
+        "深度 IDE 集成",
+        "代码理解强",
+        "MCP 支持"
+      ],
+      "cons": [
+        "平台绑定"
+      ],
+      "timestamp": "2026-06-19T06:32:02.875512+00:00"
+    },
+    {
+      "name": "CrewAI + Cursor SDK",
+      "description": "混合方案",
+      "score": 8.5,
+      "pros": [
+        "两者优势叠加",
+        "灵活性强"
+      ],
+      "cons": [
+        "集成复杂度"
+      ],
+      "timestamp": "2026-06-19T06:32:02.875512+00:00"
+    }
+  ],
+  "capabilities": [
+    {
+      "name": "AgentBase 抽象层",
+      "status": "pass",
+      "detail": "PMOAgent 基类, 状态机/反射/消息集成",
+      "timestamp": "2026-06-19T06:32:02.875512+00:00"
+    },
+    {
+      "name": "三权分立 agent",
+      "status": "pass",
+      "detail": "L0 Sponsor / L1 PMO-Main / L2 司法权分离",
+      "timestamp": "2026-06-19T06:32:02.875512+00:00"
+    },
+    {
+      "name": "3 维度分离",
+      "status": "pass",
+      "detail": "维度1: 业务项目整体 / 维度2: 研发5阶段 / 维度3: 上报",
+      "timestamp": "2026-06-19T06:32:02.875512+00:00"
+    },
+    {
+      "name": "业务 agent 框架态",
+      "status": "pass",
+      "detail": "1.x-biz-template/biz-agents/ 空框架, 业务自定",
+      "timestamp": "2026-06-19T06:32:02.875512+00:00"
+    },
+    {
+      "name": "5 阶段研发角色",
+      "status": "pass",
+      "detail": "Requirement/Development/Test/Operations/Evaluation Engineer",
+      "timestamp": "2026-06-19T06:32:02.875512+00:00"
+    },
+    {
+      "name": "agent 状态机",
+      "status": "pass",
+      "detail": "idle/activated/running/suspended/completed/error",
+      "timestamp": "2026-06-19T06:32:02.875512+00:00"
+    },
+    {
+      "name": "agent 自检机制",
+      "status": "pass",
+      "detail": "M1.5 PMO 自检 + 自进化",
+      "timestamp": "2026-06-19T06:32:02.875512+00:00"
+    }
+  ],
+  "scopes": [
+    {
+      "scope": "AI PMO 治理场景",
+      "applicable": true,
+      "reason": "当前框架专为 AI PMO 设计",
+      "timestamp": "2026-06-19T06:32:02.875512+00:00"
+    },
+    {
+      "scope": "多业务项目并发",
+      "applicable": true,
+      "reason": "多租户隔离 + 消息中介",
+      "timestamp": "2026-06-19T06:32:02.875512+00:00"
+    },
+    {
+      "scope": "量化金融场景",
+      "applicable": true,
+      "reason": "1.x-examples/quant-finance 参考",
+      "timestamp": "2026-06-19T06:32:02.875512+00:00"
+    },
+    {
+      "scope": "通用 LLM 应用",
+      "applicable": false,
+      "reason": "PMO 特化, 非通用框架",
+      "timestamp": "2026-06-19T06:32:02.875512+00:00"
+    },
+    {
+      "scope": "实时交易系统",
+      "applicable": false,
+      "reason": "延迟敏感场景不适用",
+      "timestamp": "2026-06-19T06:32:02.875512+00:00"
+    }
+  ],
+  "recommendations": [
+    {
+      "type": "recommended",
+      "option": "Cursor SDK + 自研 PMOAgent 基类",
+      "score": 9.0,
+      "reason": "深度 IDE 集成 + PMO 特化需求完美匹配"
+    },
+    {
+      "type": "alternative",
+      "option": "CrewAI + Cursor SDK 混合",
+      "score": 8.5,
+      "reason": "CrewAI 提供协作机制, Cursor SDK 提供 IDE 能力"
+    },
+    {
+      "type": "not_recommended",
+      "option": "纯 LangChain/AutoGen",
+      "score": 7.0,
+      "reason": "缺少 PMO 特有治理/合规/消息机制"
+    }
+  ],
+  "summary": {
+    "candidate_count": 5,
+    "capability_count": 7,
+    "scope_count": 5
+  }
+}

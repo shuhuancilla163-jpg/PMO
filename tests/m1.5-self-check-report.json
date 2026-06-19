@@ -1,110 +1,116 @@
 {
   "version": "0.9.0",
   "decision": "DEC-2026-0002",
-  "timestamp": "2026-06-19T01:46:59.150385+00:00",
+  "timestamp": "2026-06-19T01:59:17.068329+00:00",
   "summary": {
-    "total": 16,
-    "pass": 15,
+    "total": 17,
+    "pass": 16,
     "warning": 1,
     "fail": 0,
-    "pass_rate": "93.8%"
+    "pass_rate": "94.1%"
   },
   "results": [
     {
       "check": "D1-阶段流转合规",
       "status": "pass",
       "detail": "1.1 状态: active",
-      "timestamp": "2026-06-19T01:46:59.100766+00:00"
+      "timestamp": "2026-06-19T01:59:17.033249+00:00"
     },
     {
       "check": "D2-阶段门控生效",
       "status": "pass",
       "detail": "pass: 4/4",
-      "timestamp": "2026-06-19T01:46:59.132190+00:00"
+      "timestamp": "2026-06-19T01:59:17.053136+00:00"
     },
     {
       "check": "D3-不可变文档完整性",
       "status": "pass",
-      "detail": "元规则: 14/12",
-      "timestamp": "2026-06-19T01:46:59.133867+00:00"
+      "detail": "元规则: 15/12",
+      "timestamp": "2026-06-19T01:59:17.053550+00:00"
     },
     {
       "check": "D4-接口契约一致性",
       "status": "pass",
       "detail": "缺: 无",
-      "timestamp": "2026-06-19T01:46:59.134027+00:00"
+      "timestamp": "2026-06-19T01:59:17.053630+00:00"
     },
     {
       "check": "D10-跨级汇报检测",
       "status": "pass",
       "detail": "L0 监督不执行, L1 行政管 N 项目, L2 司法审计 L1",
-      "timestamp": "2026-06-19T01:46:59.134041+00:00"
+      "timestamp": "2026-06-19T01:59:17.053638+00:00"
     },
     {
       "check": "D11-主agent越权检测",
       "status": "pass",
       "detail": "PMO-Main 只监管业务项目整体, 不干预业务具体内容",
-      "timestamp": "2026-06-19T01:46:59.134049+00:00"
+      "timestamp": "2026-06-19T01:59:17.053644+00:00"
     },
     {
       "check": "D12-子agent决策越权检测",
       "status": "pass",
       "detail": "L2 agent 只审计 L1, 不做 L1 决策",
-      "timestamp": "2026-06-19T01:46:59.134056+00:00"
+      "timestamp": "2026-06-19T01:59:17.053648+00:00"
     },
     {
       "check": "D13-异常拦截检测",
       "status": "pass",
       "detail": "异常对象: BizException",
-      "timestamp": "2026-06-19T01:46:59.136462+00:00"
+      "timestamp": "2026-06-19T01:59:17.054930+00:00"
     },
     {
       "check": "D16-指标可贯彻检测",
       "status": "warning",
       "detail": "traceable: False",
-      "timestamp": "2026-06-19T01:46:59.140100+00:00"
+      "timestamp": "2026-06-19T01:59:17.056832+00:00"
     },
     {
       "check": "DEC-业务项目考核自检",
       "status": "pass",
       "detail": "1.1 verdict: partial",
-      "timestamp": "2026-06-19T01:46:59.140201+00:00"
+      "timestamp": "2026-06-19T01:59:17.056937+00:00"
     },
     {
       "check": "DEC-3维度监控自检",
       "status": "pass",
       "detail": "3 维度监控完成",
-      "timestamp": "2026-06-19T01:46:59.140240+00:00"
+      "timestamp": "2026-06-19T01:59:17.056969+00:00"
     },
     {
       "check": "DEC-消息流通自检",
       "status": "pass",
       "detail": "订阅+发布+投递 3 步",
-      "timestamp": "2026-06-19T01:46:59.140374+00:00"
+      "timestamp": "2026-06-19T01:59:17.059062+00:00"
     },
     {
       "check": "PMO-升级机制",
       "status": "pass",
       "detail": "sha256: 00454304fd6ae0ce...",
-      "timestamp": "2026-06-19T01:46:59.141061+00:00"
+      "timestamp": "2026-06-19T01:59:17.059409+00:00"
     },
     {
       "check": "Sponsor-报告可出",
       "status": "pass",
       "detail": "PMO: running",
-      "timestamp": "2026-06-19T01:46:59.141132+00:00"
+      "timestamp": "2026-06-19T01:59:17.059451+00:00"
     },
     {
       "check": "自进化机制",
       "status": "pass",
       "detail": "ReflectionManager 可工作",
-      "timestamp": "2026-06-19T01:46:59.142945+00:00"
+      "timestamp": "2026-06-19T01:59:17.060773+00:00"
     },
     {
       "check": "指标看板",
       "status": "pass",
       "detail": "总指标: 21",
-      "timestamp": "2026-06-19T01:46:59.149905+00:00"
+      "timestamp": "2026-06-19T01:59:17.066621+00:00"
+    },
+    {
+      "check": "D17-消息流通自检",
+      "status": "pass",
+      "detail": "路由 OK, 协议校验 OK, 监控 OK, 审计 OK (audit=4 条)",
+      "timestamp": "2026-06-19T01:59:17.067630+00:00"
     }
   ]
 }

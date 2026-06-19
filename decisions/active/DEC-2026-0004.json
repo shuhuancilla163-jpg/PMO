@@ -1,0 +1,50 @@
+{
+  "decision_id": "DEC-2026-0004",
+  "date": "2026-06-19",
+  "title": "项目间消息流通机制 (m1.6, Message-Broker 完整化)",
+  "version": "v0.11.0",
+  "background": "DEC-2026-0002 加 3 项 (项目考核/监控可控/项目间消息), 计划定义 m1.6 项目间消息流通。m0.2 v0.2.1 已实现 Message-Broker-Agent 简化版 (subscribe/publish/deliver/stats), 但缺: 协议强制字段校验、主题命名规范、QoS 等级、重试机制、可监控 (11 项指标)、可审计 (append-only 审计日志)。",
+  "decision": "实施 m1.6 完整 Message-Broker 机制:",
+  "key_blocks": [
+    {
+      "block": "协议强制",
+      "details": "msg_id/msg_type/from/to/topic/qos/timestamp/layer/content 必填; 6 类消息类型 (request/response/notification/alert/escalation/biz_event/biz_data); 6 类主题 (biz.* + inter.biz.* + pmo.*); 3 类 QoS (0/1/2)"
+    },
+    {
+      "block": "中介路由",
+      "details": "业务项目 A → PMO Message-Broker → 业务项目 B (单向中介); 业务项目不直接发消息给其他业务项目; 业务项目只能订阅自己有权的主题"
+    },
+    {
+      "block": "可靠性",
+      "details": "QoS 1+ ack 机制; 重试策略 4 次退避 (100ms/500ms/2s/10s); 5+ 次失败标记 failed 进 Sponsor 通知"
+    },
+    {
+      "block": "可监控可审计",
+      "details": "11 项监控指标 (Sponsor 看板可看); append-only 审计日志 logs/message-broker/audit-YYYYMMDD.log (按日滚动, Git 跟踪)"
+    }
+  ],
+  "metarule_added": "0.0.15 项目间消息流通 (经 PMO 中介)",
+  "files_added": [
+    "immutable/0-governance/0.0.15-inter-biz-messaging.md",
+    "scripts/runtime/protocol/message_broker.py",
+    "scripts/runtime/m1_6_self_test.py",
+    "docs/m1.6-message-broker.md"
+  ],
+  "files_updated": [
+    "immutable/0-governance/README.md (14 → 15 元规则)",
+    "scripts/runtime/agents/agent_base.py (MessageBrokerAgent 委托 broker)",
+    "scripts/runtime/self_check/self_check.py (D17 消息流通自检)"
+  ],
+  "verification": {
+    "m1.6_self_test": "5/5 pass 100%",
+    "m1.5_self_check": "16/17 pass 94.1% (0 项失败, 1 项 D16 警告已存)",
+    "pmo_runtime_smoke": "8 agent + Message-Broker 集成无破坏"
+  },
+  "impact": {
+    "biz_5step": "第 4 步 (消息接入) 现在有完整实现",
+    "m2.5": "跨边界契约加项目间消息契约 (实施 m2.5 时引用)",
+    "m2.6": "业务项目管理加消息监控 3 项指标 (m2.6 实施时引用)"
+  },
+  "release_version": "v0.11.0",
+  "next_step": "M1 全闭环完成, 准备进 M2 业务基础设施 (m2.1 → m2.7)"
+}

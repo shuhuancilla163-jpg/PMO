@@ -1,0 +1,71 @@
+{
+  "version": "0.11.0",
+  "decision": "DEC-2026-0004",
+  "test_date": "2026-06-19T01:58:32.649483+00:00",
+  "task": "m1.6 项目间消息流通",
+  "checks": [
+    {
+      "id": "V1_broker_agent_works",
+      "name": "PMO-Message-Broker-Agent 可演示",
+      "result": "pass",
+      "details": "subscribe OK, publish msg_id=ac6d3584, status=delivered"
+    },
+    {
+      "id": "V2_inter_biz_routing",
+      "name": "业务项目↔业务项目消息经 PMO 中介可跑",
+      "result": "pass",
+      "details": "1.2→broker→1.3 路由, msg_id=aabb037e, status=acked"
+    },
+    {
+      "id": "V3_msg_config",
+      "name": "消息主题/类型/协议/QoS 可配",
+      "result": "pass",
+      "details": "6 类消息类型 OK, 6 类主题 OK, 3 类 QoS OK, 协议校验拒收非法主题",
+      "sub_checks": {
+        "msg_types_6": "pass",
+        "topics_6": "pass",
+        "qos_3": "pass",
+        "invalid_topic_rejected": "pass"
+      }
+    },
+    {
+      "id": "V4_msg_monitor",
+      "name": "消息可监控 (11 项指标)",
+      "result": "pass",
+      "details": "11 项指标齐全: message_total_sent, message_total_delivered, message_total_failed, message_total_retried, message_total_acked, message_avg_latency_ms, message_success_rate, subscriptions_count, topics_count, pending_count, audit_log_count",
+      "actual_metrics": {
+        "message_total_sent": 5,
+        "message_total_delivered": 2,
+        "message_total_failed": 3,
+        "message_total_retried": 3,
+        "message_total_acked": 1,
+        "message_avg_latency_ms": 0.012874603271484375,
+        "message_success_rate": 40.0,
+        "subscriptions_count": 3,
+        "topics_count": 3,
+        "pending_count": 3,
+        "audit_log_count": 17
+      },
+      "missing": []
+    },
+    {
+      "id": "V5_msg_audit",
+      "name": "消息可审计 (append-only)",
+      "result": "pass",
+      "details": "审计 17 条, 动作 ['ack', 'deliver', 'publish', 'retry', 'subscribe'], 文件 1 个",
+      "sub_checks": {
+        "audit_log_nonempty": "pass",
+        "all_actions_present": "pass",
+        "audit_files_written": "pass"
+      }
+    }
+  ],
+  "summary": {
+    "total": 5,
+    "passed": 5,
+    "failed": 0,
+    "pass_rate": "100.0%"
+  },
+  "acceptance_criteria": "5 项全部 pass, m1.6 通过",
+  "status": "completed"
+}

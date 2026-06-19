@@ -8,7 +8,7 @@ PMO Agent 基类 (agent_base.py)
   - L2 Monitor-Agent (司法权, 维度 3: 业务项目上报)
   - L2 Reviewer-Agent (司法权, 审查/审计)
   - L2 Assessor-Agent (司法权, 3 维度分别考核)
-  - L2 Message-Broker-Agent (司法权, 项目间消息)
+  - L2 Message-Broker-Agent (司法权, 项目间消息, 委托 m1.6 MessageBroker)
 - agent 状态机 (idle/activated/running/suspended/completed/error)
 - 反射 (introspection, 看自己状态)
 - 3 维度采集角色严格分离 (DEC-2026-0002)
@@ -16,15 +16,16 @@ PMO Agent 基类 (agent_base.py)
 """
 import json
 import os
+import sys
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional, Dict, Any, List
 from abc import ABC, abstractmethod
 
-import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from core.state_machine import AgentState, StateMachine
+from protocol.message_broker import MessageBroker, MessageType, QoSLevel
 
 
 class PMOAgent(ABC):
@@ -553,78 +554,73 @@ class AssessorAgent(PMOAgent):
 # L2 Message-Broker-Agent (司法权, 项目间消息)  (新, DEC-2026-0002)
 # ============================================
 class MessageBrokerAgent(PMOAgent):
-    """L2 Message-Broker — 司法权 (消息, DEC-2026-0002)
-    
+    """L2 Message-Broker — 司法权 (消息, m1.6, DEC-2026-0004)
+
+    委托: scripts/runtime/protocol/message_broker.py MessageBroker
     职责: 业务项目↔业务项目消息经 PMO 实例中介
-    消息类型: request/response, notification/alert/escalation, biz_event, biz_data
-    消息主题: biz.{id}.state/metric/exception/data, inter.biz.{a}.to.{b}
+    协议: msg_type (6 类) / topic (6 类) / qos (3 类) / 强制字段 / 协议校验
+    监控: 11 项 (total_sent/delivered/failed/retried/acked/avg_latency/success_rate/...)
+    审计: append-only, logs/message-broker/audit-YYYYMMDD.log
     """
-    
+
     def __init__(self, pmo_root: str):
-        super().__init__("Message-Broker-Agent", "司法权 (消息, 项目间消息经 PMO 中介)", "L2", pmo_root)
-        # 消息队列 (key=topic, value=消息列表)
-        self.message_queue: Dict[str, List[Dict[str, Any]]] = {}
-        # 订阅关系 (key=project_id, value=订阅主题列表)
-        self.subscriptions: Dict[str, List[str]] = {}
-        # 消息统计
-        self.message_stats: Dict[str, int] = {
-            "total_sent": 0,
-            "total_received": 0,
-            "total_failed": 0,
-            "total_retried": 0
-        }
-    
+        super().__init__("Message-Broker-Agent", "司法权 (消息, 项目间消息经 PMO 中介, m1.6)", "L2", pmo_root)
+        # 委托 m1.6 MessageBroker
+        self.broker = MessageBroker(pmo_root)
+
     def subscribe(self, project_id: str, topic: str) -> bool:
-        """业务项目订阅主题"""
-        if project_id not in self.subscriptions:
-            self.subscriptions[project_id] = []
-        if topic not in self.subscriptions[project_id]:
-            self.subscriptions[project_id].append(topic)
+        """业务项目订阅主题 (委托 broker)"""
+        success = self.broker.subscribe(project_id, topic)
         self.log_reflection("subscribe", f"项目 {project_id} 订阅主题 {topic}")
-        return True
-    
-    def publish(self, from_project: str, topic: str, message: Dict[str, Any]) -> bool:
-        """业务项目发布消息到主题"""
-        if topic not in self.message_queue:
-            self.message_queue[topic] = []
-        msg = {
-            "from": from_project,
-            "topic": topic,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-            "message": message,
-            "delivered": False
-        }
-        self.message_queue[topic].append(msg)
-        self.message_stats["total_sent"] += 1
-        self.log_reflection("publish", f"项目 {from_project} 发布消息到 {topic}")
-        return True
-    
-    def deliver(self, topic: str) -> List[Dict[str, Any]]:
-        """投递主题消息给订阅者 (经 PMO 中介)"""
-        delivered = []
-        if topic not in self.message_queue:
-            return delivered
-        for project_id, topics in self.subscriptions.items():
-            if topic in topics:
-                for msg in self.message_queue[topic]:
-                    if not msg["delivered"]:
-                        msg_copy = {**msg, "to": project_id, "delivered": True, "delivered_at": datetime.now(timezone.utc).isoformat()}
-                        delivered.append(msg_copy)
-                        self.message_stats["total_received"] += 1
-        # 标记已投递
-        for msg in self.message_queue[topic]:
-            msg["delivered"] = True
-        return delivered
-    
+        return success
+
+    def unsubscribe(self, project_id: str, topic: str) -> bool:
+        """业务项目取消订阅"""
+        success = self.broker.unsubscribe(project_id, topic)
+        self.log_reflection("unsubscribe", f"项目 {project_id} 取消订阅 {topic}")
+        return success
+
+    def publish(self, from_project: str, to_project: str, topic: str,
+                msg_type: MessageType, content: Dict[str, Any],
+                qos: QoSLevel = QoSLevel.AT_LEAST_ONCE,
+                layer: str = "biz", correlation_id: str = None):
+        """业务项目发布消息 (经 broker, m1.6)
+
+        Args:
+            from_project: 发送方项目 ID
+            to_project: 接收方项目 ID (broker 路由, 不直发)
+            topic: 消息主题
+            msg_type: 消息类型
+            content: 业务负载
+            qos: QoS 等级
+            layer: L0/L1/L2/biz
+            correlation_id: 关联 ID
+        """
+        msg = self.broker.publish(
+            from_project=from_project,
+            to_project=to_project,
+            topic=topic,
+            msg_type=msg_type,
+            content=content,
+            qos=qos,
+            layer=layer,
+            correlation_id=correlation_id
+        )
+        self.log_reflection("publish", f"项目 {from_project} → {to_project} topic={topic} msg_id={msg.msg_id} status={msg.status.value}")
+        return msg
+
+    def get_monitoring_metrics(self) -> Dict[str, Any]:
+        """获取监控指标 (Sponsor 看板)"""
+        return self.broker.get_monitoring_metrics()
+
+    def get_audit_log(self, project_id: str = None, topic: str = None, limit: int = 100) -> List[Dict[str, Any]]:
+        """获取审计日志 (可审计)"""
+        return self.broker.get_audit_log(project_id=project_id, topic=topic, limit=limit)
+
     def get_message_stats(self) -> Dict[str, Any]:
-        """获取消息统计"""
-        return {
-            "stats": self.message_stats,
-            "subscriptions_count": len(self.subscriptions),
-            "topics_count": len(self.message_queue),
-            "total_pending": sum(1 for msgs in self.message_queue.values() for m in msgs if not m["delivered"])
-        }
-    
+        """获取消息统计 (m0.2 兼容接口)"""
+        return self.broker.get_message_stats()
+
     def process(self, task: Dict[str, Any]) -> Dict[str, Any]:
         action = task.get("action", "")
         if action == "subscribe":
@@ -634,17 +630,46 @@ class MessageBrokerAgent(PMOAgent):
             return {"agent": self.name, "action": action, "success": success, "result": f"项目 {project_id} 订阅 {topic}"}
         elif action == "publish":
             from_project = task.get("from_project", "")
+            to_project = task.get("to_project", "")
             topic = task.get("topic", "")
-            message = task.get("message", {})
-            success = self.publish(from_project, topic, message)
-            return {"agent": self.name, "action": action, "success": success, "result": f"项目 {from_project} 发布到 {topic}"}
+            msg_type_str = task.get("msg_type", "notification")
+            content = task.get("content", {})
+            qos_str = task.get("qos", "1")
+            layer = task.get("layer", "biz")
+            correlation_id = task.get("correlation_id")
+            try:
+                msg_type = MessageType(msg_type_str)
+            except ValueError:
+                return {"agent": self.name, "action": action, "success": False, "error": f"invalid msg_type: {msg_type_str}"}
+            try:
+                qos = QoSLevel(qos_str)
+            except ValueError:
+                return {"agent": self.name, "action": action, "success": False, "error": f"invalid qos: {qos_str}"}
+            msg = self.publish(from_project, to_project, topic, msg_type, content, qos, layer, correlation_id)
+            return {
+                "agent": self.name, "action": action, "success": msg.status.value != "failed",
+                "result": {
+                    "msg_id": msg.msg_id, "status": msg.status.value,
+                    "qos": msg.qos.value, "retry_count": msg.retry_count,
+                    "delivered_at": msg.delivered_at, "error": msg.error
+                }
+            }
         elif action == "deliver":
             topic = task.get("topic", "")
-            delivered = self.deliver(topic)
-            return {"agent": self.name, "action": action, "success": True, "result": delivered}
+            msg = self.broker._deliver_to_topic(topic)
+            return {"agent": self.name, "action": action, "success": True, "result": msg.to_dict()}
         elif action == "get_message_stats":
             stats = self.get_message_stats()
             return {"agent": self.name, "action": action, "success": True, "result": stats}
+        elif action == "get_monitoring_metrics":
+            metrics = self.get_monitoring_metrics()
+            return {"agent": self.name, "action": action, "success": True, "result": metrics}
+        elif action == "get_audit_log":
+            project_id = task.get("project_id")
+            topic = task.get("topic")
+            limit = task.get("limit", 100)
+            audit = self.get_audit_log(project_id=project_id, topic=topic, limit=limit)
+            return {"agent": self.name, "action": action, "success": True, "result": audit}
         return {"agent": self.name, "action": action, "success": False, "error": "unknown action"}
 
 

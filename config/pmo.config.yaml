@@ -5,7 +5,7 @@
 # PMO 元信息
 # ============================================
 pmo:
-  version: "0.1.0"
+  version: "0.11.0"
   name: "AI PMO Platform"
   instance_id: "pmo-local-001"
   # 1 套 PMO 规范, 1 个 PMO 实例, N 个业务项目 (0.0.10)

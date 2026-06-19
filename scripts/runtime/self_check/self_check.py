@@ -10,6 +10,7 @@ PMO 自检模块 (self_check.py)
   - D12: 子 agent 决策越权检测
   - D13: 异常拦截检测
   - D16: 指标可贯彻检测
+- D17: 消息流通自检 (m1.6, DEC-2026-0004) — 业务项目↔业务项目消息经 PMO 中介
 - PMO 升级机制可演示
 - Sponsor 报告可出
 - 自进化机制可演示 (0.0.8)
@@ -243,6 +244,60 @@ class SelfChecker:
         except Exception as e:
             self._record("指标看板", CheckStatus.FAIL, f"异常: {e}")
             return False
+
+    def d17_message_broker_flow(self) -> bool:
+        """D17: 消息流通自检 (m1.6, DEC-2026-0004)
+
+        验收 4 项子检查:
+        - 业务项目↔业务项目消息经 PMO 中介可跑 (路由)
+        - 消息主题/类型/协议/QoS 可配 (强制字段校验)
+        - 消息可监控 (11 项指标)
+        - 消息可审计 (append-only 审计日志)
+        """
+        try:
+            from protocol.message_broker import MessageBroker, MessageType, QoSLevel
+
+            broker = MessageBroker(str(self.pmo_root))
+
+            # 4a: 业务项目间消息经 broker (1.2→broker→1.3)
+            broker.subscribe("1.3", "inter.biz.1.2.to.1.3")
+            msg1 = broker.publish(
+                from_project="1.2", to_project="1.3", topic="inter.biz.1.2.to.1.3",
+                msg_type=MessageType.NOTIFICATION, content={"event": "data_sync"},
+                qos=QoSLevel.AT_LEAST_ONCE
+            )
+            routing_ok = msg1.status.value == "acked"
+
+            # 4b: 协议校验 (强制字段)
+            from protocol.message_broker import Message
+            invalid_msg = Message(
+                msg_type=MessageType.NOTIFICATION, from_="1.1", to="1.2",
+                topic="invalid.topic", content={"test": "fail"}, qos=QoSLevel.AT_LEAST_ONCE
+            )
+            invalid_rejected = not invalid_msg.validate()
+
+            # 4c: 监控指标 (11 项)
+            metrics = broker.get_monitoring_metrics()
+            expected_metrics = [
+                "message_total_sent", "message_total_delivered", "message_total_failed",
+                "message_total_retried", "message_total_acked", "message_avg_latency_ms",
+                "message_success_rate", "subscriptions_count", "topics_count",
+                "pending_count", "audit_log_count"
+            ]
+            monitor_ok = all(m in metrics["stats"] for m in expected_metrics)
+
+            # 4d: 审计日志 (append-only)
+            audit_log = broker.get_audit_log(limit=100)
+            actions = set(e["action"] for e in audit_log)
+            audit_ok = len(audit_log) > 0 and {"publish", "deliver"}.issubset(actions)
+
+            all_ok = routing_ok and invalid_rejected and monitor_ok and audit_ok
+            detail = f"路由 {'OK' if routing_ok else 'FAIL'}, 协议校验 {'OK' if invalid_rejected else 'FAIL'}, 监控 {'OK' if monitor_ok else 'FAIL'}, 审计 {'OK' if audit_ok else 'FAIL'} (audit={len(audit_log)} 条)"
+            self._record("D17-消息流通自检", CheckStatus.PASS if all_ok else CheckStatus.FAIL, detail)
+            return all_ok
+        except Exception as e:
+            self._record("D17-消息流通自检", CheckStatus.FAIL, f"异常: {e}")
+            return False
     
     def run_all(self, pmo=None) -> Dict[str, Any]:
         """运行所有自检 (9 项基础 + DEC-2026-0002 3 项 + 4 项机制)"""
@@ -278,6 +333,10 @@ class SelfChecker:
         self.sponsor_report()
         self.self_evolution()
         self.metrics_dashboard()
+
+        # D17 消息流通自检 (m1.6, DEC-2026-0004)
+        print("\n【D17 消息流通自检 (m1.6, DEC-2026-0004)】")
+        self.d17_message_broker_flow()
         
         # 输出结果
         print("\n自检结果:")
@@ -334,8 +393,8 @@ if __name__ == "__main__":
     report_file = report_dir / "m1.5-self-check-report.json"
     with open(report_file, "w") as f:
         json.dump({
-            "version": "0.9.0",
-            "decision": "DEC-2026-0002",
+            "version": "0.11.0",
+            "decision": "DEC-2026-0002 + DEC-2026-0004",
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "summary": {
                 "total": result["total"],

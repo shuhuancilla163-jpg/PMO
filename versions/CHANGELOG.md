@@ -4,6 +4,70 @@
 
 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.11.0] - 2026-06-19
+
+### Added (m1.6 项目间消息流通, DEC-2026-0004, 14 → 15 元规则)
+
+**核心完成**: M1 规则 6 项全闭环 (m1.1-m1.6), 业务接入第 4 步 (消息接入) 有完整实现。
+
+#### 元规则 (14 → 15)
+- immutable/0-governance/0.0.15-inter-biz-messaging.md (新建)
+  - 业务项目↔业务项目消息经 PMO 实例中介
+  - 6 类消息类型 (request/response/notification/alert/escalation/biz_event/biz_data)
+  - 6 类主题 (biz.* + inter.biz.* + pmo.*)
+  - 3 类 QoS (0/1/2)
+  - 11 项监控指标
+  - append-only 审计日志
+  - 重试策略 (4 次退避)
+  - 协议强制字段校验
+- immutable/0-governance/README.md (更新, 15 项元规则索引)
+
+#### Message-Broker 完整化 (m1.6)
+- scripts/runtime/protocol/message_broker.py (新建, 340 行)
+  - 6 类 MessageType 枚举
+  - 3 类 QoSLevel 枚举
+  - 主题 6 类正则模式 (TOPIC_PATTERNS)
+  - 协议强制字段 (msg_id/msg_type/from/to/topic/qos/timestamp/layer/content)
+  - 协议校验 (validate 方法)
+  - 11 项监控指标 (stats)
+  - append-only 审计日志 (logs/message-broker/audit-YYYYMMDD.log)
+  - 重试机制 (4 次退避: 100ms/500ms/2s/10s)
+  - 中介路由 (业务项目 A → broker → 业务项目 B)
+- scripts/runtime/agents/agent_base.py (更新)
+  - MessageBrokerAgent 委托 m1.6 MessageBroker
+  - 7 个 action 接口: subscribe/unsubscribe/publish/deliver/get_message_stats/get_monitoring_metrics/get_audit_log
+- scripts/runtime/m1_6_self_test.py (新建)
+  - 5 项验收点 (按 plan + 0.0.15)
+  - 输出 tests/m1.6-self-test-report.json
+- scripts/runtime/self_check/self_check.py (更新)
+  - D17 消息流通自检 (4 子检查: 路由/协议/监控/审计)
+  - 16/17 pass 94.1%
+- docs/m1.6-message-broker.md (新建)
+  - 验收 5 项 + 6 类类型 + 6 类主题 + 3 类 QoS + 11 项监控 + 重试 + 审计
+
+#### 决策 + 版本
+- decisions/active/DEC-2026-0004.json (新建)
+  - 4 块关键设计: 协议强制 + 中介路由 + 可靠性 + 可监控可审计
+  - release_version: v0.11.0
+
+### Changed
+- 14 元规则 → 15 元规则 (新增 0.0.15)
+- 业务接入第 4 步 (消息接入) 完整实现
+- Message-Broker-Agent 从 m0.2 简化版升级到 m1.6 完整版
+
+### Verification
+- m1.6 自测: 5/5 pass 100%
+- m1.5 自检: 16/17 pass 94.1% (含 D17)
+- m0.5 自测: 12/12 pass 100%
+- PMO 运行时: 8 agent 集成无破坏
+- Sponsor 通知: D17 自检结果进 Sponsor 看板
+
+### 关键决策
+- **DEC-2026-0004**: 项目间消息流通 (2026-06-19, v0.11.0)
+- 业务项目不直接通信, 全部经 PMO broker
+- 消息可监控/可审计, 决策日志规范
+- 影响: m2.5 跨边界契约加项目间消息契约
+
 ## [0.10.0] - 2026-06-19
 
 ### Added (DEC-2026-0003 5 阶段 agent 修正, 12 → 14 元规则)

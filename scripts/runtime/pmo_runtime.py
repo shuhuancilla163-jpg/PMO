@@ -20,6 +20,7 @@ from core.state_machine import (
 from core.reflect import ReflectionManager, ReflectionType
 from agents.agent_base import (
     PMOAgent, PMOMainAgent, PlanAgent, EngineerAgent, ReviewerAgent, SponsorAgent,
+    MonitorAgent, AssessorAgent, MessageBrokerAgent,  # DEC-2026-0002 新增 3 agent
     PMOInstance
 )
 from triggers.triggers import Trigger, TriggerType, TriggerManager
@@ -37,7 +38,7 @@ def main():
     PMO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     
     print("=" * 60)
-    print("  PMO 运行时 v0.2.0 — 完整演示")
+    print("  PMO 运行时 v0.2.1 — 8 agent + 3 维度 (DEC-2026-0002)")
     print(f"  PMO_ROOT: {PMO_ROOT}")
     print(f"  时间: {datetime.now(timezone.utc).isoformat()}")
     print("=" * 60)
@@ -66,12 +67,41 @@ def main():
     bpsm.save(Path(PMO_ROOT) / "tasks" / "state" / "1.1-pmo-self.json")
     print(f"  - 1.1 业务项目状态机: {bpsm.get_state()}")
     
-    # 2. PMO 实例 (5 agent)
-    print("\n[2] PMO 实例 (1 个, 管 5 agent, 三权分立)")
+    # 2. PMO 实例 (8 agent, 三权分立 + 3 维度分离, DEC-2026-0002)
+    print("\n[2] PMO 实例 (1 个, 管 8 agent, 三权分立 + 3 维度分离)")
     pmo = PMOInstance(PMO_ROOT)
     pmo.activate_all()
     for agent in pmo.agents:
         print(f"  - {agent.layer} {agent.name}: {agent.reflect()['state']}")
+    
+    # 2.1 维度 1 业务项目注册 (PMO-Main 维度 1 采集)
+    pmo.pmo_main.process({"action": "register_project", "project_id": "1.1"})
+    pmo.pmo_main.process({"action": "update_business_state", "project_id": "1.1", "state": "active"})
+    print(f"  - 维度 1 (业务项目整体): 已注册 1.1, 状态 active")
+    
+    # 2.2 维度 2 业务项目内研发 5 阶段数据 (Engineer-Agent 维度 2 采集)
+    pmo.engineer_agent.process({"action": "collect_eng_stage_data", "project_id": "1.1", "stage": "requirement", "data": {"doc": "需求"}})
+    pmo.engineer_agent.process({"action": "collect_eng_stage_data", "project_id": "1.1", "stage": "development", "data": {"code": "代码"}})
+    pmo.engineer_agent.process({"action": "collect_eng_stage_data", "project_id": "1.1", "stage": "test", "data": {"cases": 5}})
+    pmo.engineer_agent.process({"action": "collect_eng_stage_data", "project_id": "1.1", "stage": "operations", "data": {"deploy": "ok"}})
+    pmo.engineer_agent.process({"action": "collect_eng_stage_data", "project_id": "1.1", "stage": "evaluation", "data": {"report": "ok"}})
+    print(f"  - 维度 2 (研发 5 阶段): 1.1 全部 5 阶段数据已采集")
+    
+    # 2.3 维度 3 业务项目上报 (Monitor-Agent 维度 3 采集)
+    pmo.monitor_agent.process({"action": "collect_reported_data", "project_id": "1.1", "data": {
+        "flow_latency": 100, "exception_rate": 0.01, "pass_rate": 0.99, "rollback_rate": 0.001, "token_consumption": 10000
+    }})
+    print(f"  - 维度 3 (业务项目上报): 1.1 上报合规率 100%")
+    
+    # 2.4 Assessor 3 维度分别考核
+    assessment = pmo.assessor_agent.assess_project(pmo.pmo_main, pmo.engineer_agent, pmo.monitor_agent, "1.1")
+    print(f"  - Assessor 3 维度考核: 1.1 总考 {assessment['overall_verdict']}")
+    
+    # 2.5 Message-Broker 项目间消息
+    pmo.message_broker_agent.process({"action": "subscribe", "project_id": "1.1", "topic": "biz.1.2.state"})
+    pmo.message_broker_agent.process({"action": "publish", "from_project": "1.2", "topic": "biz.1.2.state", "message": {"event": "active"}})
+    pmo.message_broker_agent.process({"action": "deliver", "topic": "biz.1.2.state"})
+    print(f"  - Message-Broker: 1.1↔1.2 消息经 PMO 中介已投递")
     
     # 3. 触发器
     print("\n[3] 触发器 (4 类: 时间/事件/状态/手动)")
@@ -152,7 +182,7 @@ def main():
     print(f"  - 指标: {dashboard['summary']['total_metrics']} 项")
     print(f"  - 反思: {rm.get_statistics()['total_reflections']} 条")
     print()
-    print("✅ m0.2 运行时完成, v0.2.0")
+    print("✅ m0.2 运行时 v0.2.1 完成 (8 agent + 3 维度, DEC-2026-0002)")
 
 
 if __name__ == "__main__":

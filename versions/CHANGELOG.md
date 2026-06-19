@@ -4,6 +4,27 @@
 
 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.4.0] - 2026-06-19
+
+### Added (m0.4 运维, DEC-2026-0002 实施)
+- scripts/runtime/operations/operations.py: OperationsMonitor
+  - 6 大运维能力: 监控 / 告警 3 层 / 恢复 / 灾备 / Token 预算 / 运维报告
+  - 告警 3 层: biz-self / pmo / sponsor (DEC-2026-0002 边界清晰化)
+  - 异常拦截 3 层: PMO 规范 / PMO 实例 / 业务项目 (DEC-2026-0002 边界)
+  - 恢复 6 策略: RETRY / FALLBACK / RESTART / ROLLBACK / ESCALATE / SKIP
+  - 灾备: archive/disaster-backups/<project-id>/
+  - 3 维度监控: 业务项目整体 (PMO-Main) / 研发 5 阶段 (Engineer-Agent) / 业务项目上报 (Monitor-Agent)
+- docs/m0.4-operations.md (新建, 6 大能力 + 验收 + API)
+
+### 验收 (7 项)
+- 监控可跑 ✅
+- 告警可触发 (3 层) ✅
+- 恢复可执行 ✅
+- 异常拦截 3 层可演示 ✅
+- Token 预算按业务项目分可验证 ✅
+- 灾备可演练 ✅
+- 指标监控可看 ✅
+
 ## [0.3.0] - 2026-06-19
 
 ### Added (m0.3 部署环境, DEC-2026-0002 实施)

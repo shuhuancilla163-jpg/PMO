@@ -4,6 +4,27 @@
 
 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.8.0] - 2026-06-19
+
+### Added (m1.4 8 PMO 角色规范, DEC-2026-0002 5 → 8)
+- docs/m1.4-8-pmo-roles.md (新建, 8 PMO 角色规范 + 3 维度 + 三权分立)
+- 代码已在 m0.2 v0.2.1 实施 (agent_base.py)
+- 8 PMO 角色:
+  - L0 Sponsor (人机, 监督权, 顶层权威)
+  - L1 PMO-Main (行政权, 1 实例管 N 项目, 维度 1 业务项目整体采集)
+  - L2 Plan-Agent (司法权, 计划/治理, 审计 L1)
+  - L2 Engineer-Agent (司法权, 工程, 维度 2 研发 5 阶段采集)
+  - L2 Monitor-Agent (司法权, 监控, 维度 3 业务项目上报) [新]
+  - L2 Reviewer-Agent (司法权, 审查/审计, 互相验证)
+  - L2 Assessor-Agent (司法权, 考核, 3 维度分别考核) [新]
+  - L2 Message-Broker-Agent (司法权, 消息, 项目间消息经 PMO 中介) [新]
+
+### 验收 (4 项)
+- 8 agent 可激活 (L0/L1/L2×6) ✅
+- 三权分立可演示 ✅
+- 1 规范 N 项目可演示 ✅
+- 3 维度采集严格分离 ✅
+
 ## [0.7.0] - 2026-06-19
 
 ### Added (m1.3 核心执行, 7 项工具 + DEC-2026-0002 2 项)

@@ -4,35 +4,33 @@
 
 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
-## [Unreleased]
+## [0.2.2] - 2026-06-19
 
-### Added (DEC-2026-0002)
-- 业务项目 2 层合规 (业务项目整体 + 业务项目内研发 5 阶段)
-- 5 阶段研发角色 (Requirement-Engineer / Development-Engineer / Test-Engineer / Operations-Engineer / Evaluation-Engineer), PMO 监管, 业务项目可调
-- 8 PMO 角色 (从 5 → 8, 按 3 维度严格分离): Sponsor / PMO-Main / Plan / Engineer / Monitor / Reviewer / Assessor / Message-Broker
-- 3 维度架构 (业务项目整体 / 研发 5 阶段 / 业务项目内业务)
-- 3 维度分别考核 (L2 PMO-Assessor-Agent)
-- 3 维度监控 (L1 PMO-Main / L2 PMO-Engineer-Agent / L2 PMO-Monitor-Agent)
-- 3 层上报机制 (业务项目自采 + 业务项目上报 + PMO 存上报)
-- 项目间消息经 PMO 中介 (L2 PMO-Message-Broker-Agent)
+### Added (m0.2 v0.2.1, DEC-2026-0002 实施)
+- 8 PMO 角色 (从 5 → 8, 按 3 维度严格分离):
+  - L0 Sponsor (不变)
+  - L1 PMO-Main (维度 1 业务项目整体采集)
+  - L2 Plan-Agent (不变)
+  - L2 Engineer-Agent (维度 2 研发 5 阶段采集)
+  - L2 Monitor-Agent (新增, 维度 3 业务项目上报 + 上报合规监管)
+  - L2 Reviewer-Agent (不变)
+  - L2 Assessor-Agent (新增, 3 维度分别考核)
+  - L2 Message-Broker-Agent (新增, 项目间消息经 PMO 中介)
+- 3 维度架构 (业务项目整体 / 研发 5 阶段 / 业务项目上报)
+- 业务项目 2 层合规契约 (业务项目整体 + 业务项目内研发 5 阶段)
+- 3 层上报机制 (业务自采 + 业务上报 + PMO 存上报)
+- 3 维度考核 (Assessor-Agent 按 3 维度分别考核)
+- 项目间消息经 PMO 中介 (Message-Broker-Agent)
 - 业务项目接入 PMO 5 步流程
-- 业务项目整体契约模板 + 业务项目研发 5 阶段契约模板
-- 业务项目自管业务内容 (业务场景/业务 agent/业务流程/业务异常/业务指标)
-- 业务项目上报关键指标 (5 项基础 + 自定义)
-- PMO 监管上报合规 (3 项指标)
-- 3 层异常拦截边界清晰化 (业务异常业务项目拦截, 研发异常 + 项目异常 PMO 实例拦截)
-- 0.0.7 解耦原则严格化 (PMO 定规范, 业务项目管具体)
+- scripts/runtime/README.md (新建)
 
 ### Changed
-- 业务 agent 不再固定 8 个, 业务项目按业务场景配置
-- PMO 不提供业务场景模板, 业务项目自维护
-- 业务项目模板结构 (新增 eng-roles/, messaging.yaml, reports/, 5 阶段产出目录)
+- agent_base.py: 5 agent → 8 agent
+- pmo_runtime.py: v0.2.0 → v0.2.1, 加 3 维度演示 + Assessor + Message-Broker
 
-### Fixed
-- (无)
+## [0.2.1] - 2026-06-18
 
-### Removed
-- (无)
+### Added (DEC-2026-0002)
 
 ### Changed
 - PMO 部署: 本地优先 (Q2)

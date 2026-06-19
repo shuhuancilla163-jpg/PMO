@@ -1,0 +1,108 @@
+{
+  "version": "0.3.0",
+  "decision": "DEC-2026-0002",
+  "agent_count": 8,
+  "three_dimensions": [
+    "业务项目整体",
+    "研发 5 阶段",
+    "业务项目上报"
+  ],
+  "timestamp": "2026-06-19T00:55:08.873317+00:00",
+  "system": {
+    "python": "3.9.6",
+    "psutil": "not installed"
+  },
+  "results": [
+    {
+      "name": "PMO 实例启动",
+      "duration_ms": 0.9977817535400391,
+      "memory_delta_mb": 8.0,
+      "memory_total_mb": 10016.0,
+      "cpu_delta_pct": 0.0
+    },
+    {
+      "name": "8 agent 激活",
+      "duration_ms": 0.28014183044433594,
+      "memory_delta_mb": 4.0,
+      "memory_total_mb": 10036.0,
+      "cpu_delta_pct": 0.0
+    },
+    {
+      "name": "维度 1 业务项目注册",
+      "duration_ms": 0.12803077697753906,
+      "memory_delta_mb": 16.0,
+      "memory_total_mb": 10052.0,
+      "cpu_delta_pct": 0.0
+    },
+    {
+      "name": "维度 2 研发 5 阶段采集",
+      "duration_ms": 0.9350776672363281,
+      "memory_delta_mb": 60.0,
+      "memory_total_mb": 10112.0,
+      "cpu_delta_pct": 0.0
+    },
+    {
+      "name": "维度 3 业务项目上报",
+      "duration_ms": 0.8330345153808594,
+      "memory_delta_mb": 68.0,
+      "memory_total_mb": 10180.0,
+      "cpu_delta_pct": 0.0
+    },
+    {
+      "name": "Assessor 3 维度考核",
+      "duration_ms": 0.8161067962646484,
+      "memory_delta_mb": 52.0,
+      "memory_total_mb": 10232.0,
+      "cpu_delta_pct": 0.0
+    },
+    {
+      "name": "项目间消息 100 条",
+      "duration_ms": 2.708911895751953,
+      "memory_delta_mb": 160.0,
+      "memory_total_mb": 10392.0,
+      "cpu_delta_pct": 0.0
+    },
+    {
+      "name": "状态机 10 次转换",
+      "duration_ms": 0.11420249938964844,
+      "memory_delta_mb": 12.0,
+      "memory_total_mb": 10404.0,
+      "cpu_delta_pct": 0.0
+    },
+    {
+      "name": "触发器 10 个 + 10 次触发",
+      "duration_ms": 0.36787986755371094,
+      "memory_delta_mb": 12.0,
+      "memory_total_mb": 10416.0,
+      "cpu_delta_pct": 0.0
+    },
+    {
+      "name": "异常拦截 100 次",
+      "duration_ms": 5.090951919555664,
+      "memory_delta_mb": 68.0,
+      "memory_total_mb": 10484.0,
+      "cpu_delta_pct": 0.0
+    },
+    {
+      "name": "通信 100 条",
+      "duration_ms": 2.4712085723876953,
+      "memory_delta_mb": 64.0,
+      "memory_total_mb": 10548.0,
+      "cpu_delta_pct": 0.0
+    },
+    {
+      "name": "指标 210 次",
+      "duration_ms": 1.1582374572753906,
+      "memory_delta_mb": 108.0,
+      "memory_total_mb": 10656.0,
+      "cpu_delta_pct": 0.0
+    },
+    {
+      "name": "L2 6 agent 审计 L1",
+      "duration_ms": 0.7848739624023438,
+      "memory_delta_mb": 52.0,
+      "memory_total_mb": 10712.0,
+      "cpu_delta_pct": 0.0
+    }
+  ]
+}

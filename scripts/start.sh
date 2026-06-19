@@ -5,6 +5,7 @@
 # - 加载配置
 # - 启动 agent
 # - 输出状态
+# DEC-2026-0002: 8 PMO 角色 (5 → 8, 按 3 维度严格分离)
 
 set -e
 
@@ -46,7 +47,7 @@ log_error() {
 # 启动横幅
 # ============================================
 log "================================================"
-log "  PMO 启动 v0.3.0"
+log "  PMO 启动 v0.3.0 (DEC-2026-0002, 8 PMO 角色)"
 log "  PMO_ROOT: $PMO_ROOT"
 log "  时间: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
 log "================================================"
@@ -165,9 +166,14 @@ fi
 log ""
 log "[6/6] 启动后状态"
 log_success "PMO 实例: pmo-local-001 (running)"
-log_success "Agent: 5 个 (L0 Sponsor + L1 PMO-Main + L2 Plan/Engineer/Reviewer)"
+log_success "Agent: 8 个 (L0 Sponsor + L1 PMO-Main + L2 Plan/Engineer/Monitor/Reviewer/Assessor/Message-Broker)"
+log_success "  - 三权分立: L0 监督 + L1 行政 + L2 司法 (6 个)"
+log_success "  - 3 维度采集: 维度 1 PMO-Main + 维度 2 Engineer-Agent + 维度 3 Monitor-Agent"
+log_success "  - 3 维度考核: Assessor-Agent 按 3 维度分别考核"
+log_success "  - 项目间消息: Message-Broker-Agent (业务↔业务 经 PMO 中介)"
 log_success "业务项目: 1.1-pmo-self (active)"
 log_success "指标: 21 项 (业务 5 + 治理 8 + 工程 8)"
+log_success "元规则: 12 项 (0.0.1-0.0.12, DEC-2026-0002 加 4 项)"
 log_success "日志: $LOG_FILE"
 
 log ""

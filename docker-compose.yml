@@ -1,6 +1,7 @@
 # Docker Compose
 # PMO 部署 (本地优先, 容器可扩展)
 # Q2: PMO 本地优先, Docker 容器可扩展 (后期多项目)
+# DEC-2026-0002: 8 PMO 角色 (5 → 8, 按 3 维度严格分离)
 
 version: '3.8'
 
@@ -21,6 +22,8 @@ services:
       - PMO_ROOT=/pmo
       - PMO_VERSION=0.3.0
       - PMO_INSTANCE_ID=pmo-local-001
+      - PMO_ROLES_COUNT=8  # DEC-2026-0002: 8 PMO 角色
+      - PMO_DECISION=DEC-2026-0002
     # 端口 (MCP / API, 后期)
     # ports:
     #   - "8080:8080"
@@ -35,9 +38,9 @@ services:
           cpus: '0.25'
           memory: 128M
     
-    # 健康检查
+    # 健康检查 (DEC-2026-0002: 8 PMO 角色)
     healthcheck:
-      test: ["CMD", "python3", "-c", "import sys; sys.path.insert(0, '/pmo/scripts/runtime'); from agents.agent_base import PMOInstance; pmo = PMOInstance('/pmo'); print('OK' if len(pmo.agents) == 5 else 'FAIL')"]
+      test: ["CMD", "python3", "-c", "import sys; sys.path.insert(0, '/pmo/scripts/runtime'); from agents.agent_base import PMOInstance; pmo = PMOInstance('/pmo'); assert len(pmo.agents) == 8, f'Expected 8 PMO roles, got {len(pmo.agents)}'; print('OK')"]
       interval: 30s
       timeout: 10s
       retries: 3

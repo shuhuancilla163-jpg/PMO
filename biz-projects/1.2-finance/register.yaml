@@ -36,18 +36,8 @@ agent_categories:
 
 # 业务项目 2 层合规 (0.0.11)
 compliance_2_layers:
-  layer_1:
-    description: "业务项目整体 (PMO 监管, m2.6 7 项)"
-    file: "contract-project-overall.md"
-    signed: true
-  layer_2:
-    description: "业务项目内研发 5 阶段 (PMO 监管, 0.0.13)"
-    file: "contract-eng-5-stages.md"
-    signed: true
-  layer_3:
-    description: "业务需求运营 agent (业务自管, 0.0.14)"
-    file: "contract-biz-ops-roles.md"
-    signed: true
+  layer_1_overall: true
+  layer_2_eng_5_stages: true
 
 # 业务项目 m2.6 7 项 (业务项目整体)
 m2_6_7_items:

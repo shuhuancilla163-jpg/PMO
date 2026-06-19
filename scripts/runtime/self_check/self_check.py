@@ -298,6 +298,56 @@ class SelfChecker:
         except Exception as e:
             self._record("D17-消息流通自检", CheckStatus.FAIL, f"异常: {e}")
             return False
+
+    def d18_biz_metadata_3_items(self) -> bool:
+        """D18: 业务元数据 3 项自检 (m2.1, DEC-2026-0005)
+
+        验收 3 项子检查:
+        - E1 业务项目元数据可建 (biz_project 必填字段)
+        - E2 业务数据 schema 可定义 (业务项目定义, PMO 存)
+        - E3 业务术语表可建 (业务 agent 定义, PMO 验证 + role 边界)
+        """
+        try:
+            import importlib.util
+            spec = importlib.util.spec_from_file_location(
+                "biz_metadata_mod",
+                str(self.pmo_root / "scripts" / "runtime" / "biz_metadata" / "biz_metadata.py")
+            )
+            mod = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(mod)
+            store = mod.BizMetadataStore(str(self.pmo_root))
+
+            # E1 业务项目元数据
+            e1_1 = store.load_e1("1.1-pmo-self")
+            e1_2 = store.load_e1("1.2-finance")
+            e1_ok = e1_1.get("success", False) and e1_2.get("success", False)
+
+            # E2 业务数据 schema
+            e2_1 = store.load_e2("1.1-pmo-self")
+            e2_2 = store.load_e2("1.2-finance")
+            e2_ok = e2_1.get("success", False) and e2_2.get("success", False)
+
+            # E3 业务术语表
+            e3_1 = store.load_e3("1.1-pmo-self")
+            e3_2 = store.load_e3("1.2-finance")
+            e3_ok = e3_1.get("success", False) and e3_2.get("success", False)
+
+            # 业务 agent role 边界 (DEC-2026-0003)
+            conflict_count = 0
+            for e3 in [e3_1, e3_2]:
+                if e3.get("success"):
+                    for role in e3.get("e3", {}).get("biz_glossary", {}).get("roles", []):
+                        if role.get("role", "") in mod.ENG_5_STAGES_ROLES:
+                            conflict_count += 1
+            boundary_ok = conflict_count == 0
+
+            all_ok = e1_ok and e2_ok and e3_ok and boundary_ok
+            detail = f"E1={'OK' if e1_ok else 'FAIL'}, E2={'OK' if e2_ok else 'FAIL'}, E3={'OK' if e3_ok else 'FAIL'}, role 边界={'OK' if boundary_ok else 'FAIL'}(冲突={conflict_count})"
+            self._record("D18-业务元数据自检", CheckStatus.PASS if all_ok else CheckStatus.FAIL, detail)
+            return all_ok
+        except Exception as e:
+            self._record("D18-业务元数据自检", CheckStatus.FAIL, f"异常: {e}")
+            return False
     
     def run_all(self, pmo=None) -> Dict[str, Any]:
         """运行所有自检 (9 项基础 + DEC-2026-0002 3 项 + 4 项机制)"""
@@ -337,6 +387,10 @@ class SelfChecker:
         # D17 消息流通自检 (m1.6, DEC-2026-0004)
         print("\n【D17 消息流通自检 (m1.6, DEC-2026-0004)】")
         self.d17_message_broker_flow()
+
+        # D18 业务元数据 3 项自检 (m2.1, DEC-2026-0005)
+        print("\n【D18 业务元数据 3 项自检 (m2.1, DEC-2026-0005)】")
+        self.d18_biz_metadata_3_items()
         
         # 输出结果
         print("\n自检结果:")
@@ -393,8 +447,8 @@ if __name__ == "__main__":
     report_file = report_dir / "m1.5-self-check-report.json"
     with open(report_file, "w") as f:
         json.dump({
-            "version": "0.11.0",
-            "decision": "DEC-2026-0002 + DEC-2026-0004",
+            "version": "0.12.0",
+            "decision": "DEC-2026-0002 + DEC-2026-0004 + DEC-2026-0005",
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "summary": {
                 "total": result["total"],

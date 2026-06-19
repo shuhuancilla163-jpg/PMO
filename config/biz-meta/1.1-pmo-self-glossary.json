@@ -1,0 +1,127 @@
+{
+  "biz_project_id": "1.1-pmo-self",
+  "item": "E3",
+  "loaded_at": "2026-06-19T02:15:56.899739+00:00",
+  "data": {
+    "biz_glossary": {
+      "version": "1.0",
+      "defined_by": "biz_project",
+      "validated_by": "pmo_instance",
+      "terms": [
+        {
+          "term": "task",
+          "definition": "PMO 任务, 业务项目内的最小工作单元",
+          "category": "entity",
+          "synonyms": [
+            "任务",
+            "工作项"
+          ]
+        },
+        {
+          "term": "decision",
+          "definition": "PMO 决策, Sponsor 平等讨论后定的事项",
+          "category": "entity",
+          "synonyms": [
+            "决策",
+            "DEC"
+          ]
+        },
+        {
+          "term": "phase",
+          "definition": "PMO 阶段, 阶段门控节点",
+          "category": "state",
+          "synonyms": [
+            "阶段",
+            "P0-P5"
+          ]
+        },
+        {
+          "term": "metric",
+          "definition": "PMO 指标, 业务/治理/工程三类指标",
+          "category": "metric",
+          "synonyms": [
+            "指标",
+            "度量"
+          ]
+        },
+        {
+          "term": "agent",
+          "definition": "PMO agent, 三权分立 (L0/L1/L2) + 3 维度分离",
+          "category": "role",
+          "synonyms": [
+            "智能体",
+            "代理"
+          ]
+        },
+        {
+          "term": "compliance",
+          "definition": "PMO 合规, 业务项目符合 PMO 规范",
+          "category": "metric",
+          "synonyms": [
+            "合规",
+            "符合"
+          ]
+        },
+        {
+          "term": "audit",
+          "definition": "PMO 审计, L2 司法权审计 L1 行政权",
+          "category": "action",
+          "synonyms": [
+            "审计",
+            "审查"
+          ]
+        }
+      ],
+      "roles": [
+        {
+          "role": "Plan-Curator",
+          "identity": "PMO 计划管理员",
+          "scope": "任务清单管理/任务分配/进度跟踪",
+          "uses_terms": [
+            "task",
+            "phase",
+            "compliance"
+          ]
+        },
+        {
+          "role": "Decision-Logger",
+          "identity": "PMO 决策记录员",
+          "scope": "决策日志记录/决策点识别/决策追溯",
+          "uses_terms": [
+            "decision",
+            "audit"
+          ]
+        },
+        {
+          "role": "Metric-Keeper",
+          "identity": "PMO 指标维护员",
+          "scope": "指标采集/指标看板/指标可贯彻验证",
+          "uses_terms": [
+            "metric",
+            "compliance"
+          ]
+        },
+        {
+          "role": "Compliance-Watcher",
+          "identity": "PMO 合规监督员",
+          "scope": "业务项目合规检查/合规告警/Sponsor 报告",
+          "uses_terms": [
+            "compliance",
+            "audit",
+            "metric"
+          ]
+        },
+        {
+          "role": "Self-Evolution-Agent",
+          "identity": "PMO 自进化智能体",
+          "scope": "反思/规则演进/灰度/熔断 (0.0.8 自进化)",
+          "uses_terms": [
+            "decision",
+            "metric",
+            "compliance"
+          ]
+        }
+      ]
+    }
+  }
+}

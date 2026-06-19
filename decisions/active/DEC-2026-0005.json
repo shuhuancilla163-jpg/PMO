@@ -1,0 +1,54 @@
+{
+  "decision_id": "DEC-2026-0005",
+  "date": "2026-06-19",
+  "title": "业务元数据 3 项 (E1/E2/E3, m2.1)",
+  "version": "v0.12.0",
+  "background": "M1 闭环 (m1.1-m1.6) 完成后, 进入 M2 业务基础设施第一项 m2.1。plan 验收: 业务元数据 3 项可建, 业务数据 schema 可定义 (业务项目定义, PMO 存), 业务术语表可建 (业务 agent 定义, PMO 验证)。之前 1.1/1.2 业务项目有 register.yaml 但格式不统一, 缺业务数据 schema (E2) 和业务术语表 (E3) 统一机制。",
+  "decision": "实施 m2.1 业务元数据 3 项 (E1/E2/E3):",
+  "key_blocks": [
+    {
+      "block": "E1 业务项目元数据",
+      "details": "register.yaml 规范: biz_project(id/name/type/version/sponsor/registered_at) + pmo_supervision(state/quota_4d/isolation_3d) + agent_categories(eng_roles/biz_agents) + compliance_2_layers + m2_6_7_items; PMO 存 config/biz-meta/<id>.json"
+    },
+    {
+      "block": "E2 业务数据 schema",
+      "details": "data-schema.yaml: entities (业务项目定义) + events (业务流路由); 字段含 name/type/required/values(enum)/primary_key/foreign_key; PMO 存 config/biz-meta/<id>-schema.json"
+    },
+    {
+      "block": "E3 业务术语表",
+      "details": "glossary.yaml: terms (业务术语) + roles (业务 agent 身份); 术语 category 必填 (entity/state/metric/action/role); 业务 agent role 不与 5 阶段研发 role 重名 (DEC-2026-0003 边界); PMO 存 config/biz-meta/<id>-glossary.json"
+    }
+  ],
+  "metarule_added": "0.0.16 业务元数据 3 项 (E1/E2/E3)",
+  "files_added": [
+    "immutable/0-governance/0.0.16-biz-metadata-3-items.md",
+    "scripts/runtime/biz_metadata/biz_metadata.py",
+    "scripts/runtime/biz_metadata/m2_1_self_test.py",
+    "docs/m2.1-biz-metadata.md",
+    "biz-projects/1.1-pmo-self/data-schema.yaml",
+    "biz-projects/1.1-pmo-self/glossary.yaml",
+    "biz-projects/1.2-finance/data-schema.yaml",
+    "biz-projects/1.2-finance/glossary.yaml"
+  ],
+  "files_updated": [
+    "immutable/0-governance/README.md (15 → 16 元规则)",
+    "biz-projects/1.1-pmo-self/register.yaml (升级到 m2.1 规范)",
+    "biz-projects/1.2-finance/register.yaml (升级到 m2.1 规范)",
+    "scripts/runtime/self_check/self_check.py (D18 业务元数据自检)"
+  ],
+  "verification": {
+    "m2_1_self_test": "3/3 pass 100%",
+    "m1_5_self_check": "17/18 pass 94.4% (D18 接入, 0 fail)",
+    "biz_projects_onboarded": ["1.1-pmo-self", "1.2-finance"],
+    "pmo_stored_files": 6,
+    "biz_agent_role_boundary": "0 冲突 (DEC-2026-0003)"
+  },
+  "impact": {
+    "m2_6": "业务项目注册直接消费 E1",
+    "m2_5": "跨边界契约消费 E2.events (业务事件路由)",
+    "m2_4": "业务执行消费 E3 (业务术语 + 业务 agent 身份)",
+    "biz_5step_onboarding": "前 3 步基于 m2.1 (E1 注册 → E3 角色 → E2 业务配置)"
+  },
+  "release_version": "v0.12.0",
+  "next_step": "m2.1 完成, 准备进 m2.2 业务不可变文档 2 项"
+}

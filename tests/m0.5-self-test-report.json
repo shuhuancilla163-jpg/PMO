@@ -1,7 +1,7 @@
 {
   "version": "0.6.0",
   "decision": "DEC-2026-0002",
-  "timestamp": "2026-06-19T01:59:02.369430+00:00",
+  "timestamp": "2026-06-19T02:00:14.312803+00:00",
   "summary": {
     "total": 12,
     "pass": 12,
@@ -12,74 +12,74 @@
     {
       "test": "PMO 实例能起来",
       "status": "PASS",
-      "detail": "instance_id: cc778c62",
-      "timestamp": "2026-06-19T01:59:02.351794+00:00"
+      "detail": "instance_id: a8633c4c",
+      "timestamp": "2026-06-19T02:00:14.293799+00:00"
     },
     {
       "test": "8 PMO 角色能激活",
       "status": "PASS",
       "detail": "agent 数: 8, 全部 running: True",
-      "timestamp": "2026-06-19T01:59:02.351951+00:00"
+      "timestamp": "2026-06-19T02:00:14.294039+00:00"
     },
     {
       "test": "状态机能跑",
       "status": "PASS",
       "detail": "1.1 当前状态: active",
-      "timestamp": "2026-06-19T01:59:02.351988+00:00"
+      "timestamp": "2026-06-19T02:00:14.294096+00:00"
     },
     {
       "test": "状态能持久化",
       "status": "PASS",
       "detail": "保存路径: /Users/sylvieshu/Desktop/AI finance 哈吉米/PMO/tasks/state/1.1-pmo-self.json",
-      "timestamp": "2026-06-19T01:59:02.352860+00:00"
+      "timestamp": "2026-06-19T02:00:14.294760+00:00"
     },
     {
       "test": "业务项目能注册",
       "status": "PASS",
       "detail": "管理项目数: 2",
-      "timestamp": "2026-06-19T01:59:02.352890+00:00"
+      "timestamp": "2026-06-19T02:00:14.294801+00:00"
     },
     {
       "test": "3 维度能采集",
       "status": "PASS",
       "detail": "维度 1: True, 维度 2: True, 维度 3: True",
-      "timestamp": "2026-06-19T01:59:02.352937+00:00"
+      "timestamp": "2026-06-19T02:00:14.294863+00:00"
     },
     {
       "test": "Assessor 能考核",
       "status": "PASS",
       "detail": "1.2 总考: partial",
-      "timestamp": "2026-06-19T01:59:02.352994+00:00"
+      "timestamp": "2026-06-19T02:00:14.294964+00:00"
     },
     {
       "test": "Message-Broker 能投递",
       "status": "PASS",
       "detail": "订阅: True, 发布: True, 投递: True",
-      "timestamp": "2026-06-19T01:59:02.354726+00:00"
+      "timestamp": "2026-06-19T02:00:14.298784+00:00"
     },
     {
       "test": "触发器能触发",
       "status": "PASS",
       "detail": "T-SELFTEST 触发",
-      "timestamp": "2026-06-19T01:59:02.359199+00:00"
+      "timestamp": "2026-06-19T02:00:14.302590+00:00"
     },
     {
       "test": "异常能拦截",
       "status": "PASS",
       "detail": "异常对象: BizException",
-      "timestamp": "2026-06-19T01:59:02.360917+00:00"
+      "timestamp": "2026-06-19T02:00:14.304110+00:00"
     },
     {
       "test": "指标能跑批",
       "status": "PASS",
       "detail": "总指标: 21",
-      "timestamp": "2026-06-19T01:59:02.367840+00:00"
+      "timestamp": "2026-06-19T02:00:14.310880+00:00"
     },
     {
       "test": "反射能记录",
       "status": "PASS",
-      "detail": "反思 ID: REFL-20260619015902",
-      "timestamp": "2026-06-19T01:59:02.369121+00:00"
+      "detail": "反思 ID: REFL-20260619020014",
+      "timestamp": "2026-06-19T02:00:14.312391+00:00"
     }
   ]
 }

@@ -1,29 +1,55 @@
-# 1.1 PMO 自建 — 业务项目注册
+# 1.1 PMO 自建 — 业务项目元数据 (E1, m2.1, DEC-2026-0005)
+# 业务项目接入 PMO 实例时填写
 
-```yaml
-# 业务项目注册 (PMO 实例使用)
-project_id: "1.1"
-name: "PMO 系统自建"
-type: "pmo-platform"
-version: "0.1.0"
-status: "active"
+biz_project:
+  id: "1.1-pmo-self"
+  name: "PMO 系统自建"
+  type: "pmo-platform"
+  version: "0.11.0"
+  sponsor: "Sponsor"
+  registered_at: "2026-06-18T14:00:00Z"
 
-# Sponsor
-sponsor: "Sponsor"
+# 业务项目 PMO 监管 (m2.6 7 项)
+pmo_supervision:
+  enabled: true
+  state: "active"
+  quota_4d:
+    token: "10000000"
+    time: "unlimited"
+    storage: "10GB"
+    concurrency: 5
+  isolation_3d:
+    data: "full"
+    config: "independent"
+    state: "independent"
 
-# 注册时间
-registered_at: "2026-06-18T14:00:00Z"
-phase: "P0-init"
+# 业务项目内 2 类 agent (DEC-2026-0003)
+agent_categories:
+  eng_roles:
+    description: "5 阶段研发 agent (PMO 监管, 0.0.13)"
+    pmo_supervised: true
+    location: "eng-roles/"
+  biz_agents:
+    description: "业务需求运营 agent (业务自管, 0.0.14)"
+    pmo_supervised: false
+    location: "biz-agents/"
 
-# 任务清单
-tasks:
-  total: 24
-  complexity: 78
-  pending: 23
-  in_progress: 1
-  completed: 0
+# 业务项目 2 层合规 (0.0.11)
+compliance_2_layers:
+  layer_1_overall: true
+  layer_2_eng_5_stages: true
 
-# 治理层引用
+# 业务项目 m2.6 7 项 (业务项目整体)
+m2_6_7_items:
+  registration: true
+  state_machine: true
+  quota_4d: true
+  archive_4_levels: true
+  isolation_3d: true
+  alerting_3_levels: true
+  checklist_6_plus_3: true
+
+# PMO 治理层引用
 governance_refs:
   - "immutable/0-governance/0.0.1-five-values.md"
   - "immutable/0-governance/0.0.7-decoupling-4layers.md"
@@ -35,7 +61,8 @@ governance_refs:
 access_path:
   registration: "biz-projects/1.1-pmo-self/register.yaml"
   state_machine: "tasks/state/1.1-pmo-self.json"
-  quota: "config/biz-quota/1.1-pmo-self.yaml"
+  data_schema: "biz-projects/1.1-pmo-self/data-schema.yaml"
+  glossary: "biz-projects/1.1-pmo-self/glossary.yaml"
   archive: "archive/biz-projects/1.1-pmo-self/"
   monitoring: "metrics/business/1.1-pmo-self/"
   checklist: "biz-projects/1.1-pmo-self/checklist.md"
@@ -51,21 +78,8 @@ metrics:
     - token_consumption
   custom: []
 
-# 业务配额 (4 维)
-quota:
-  token: "10000000"        # 1000万 token
-  time: "unlimited"        # 无时间限制 (开发期)
-  storage: "10GB"          # 10GB 存储
-  concurrency: 5           # 5 并发
-
-# 业务隔离 (全隔离, 1 个项目也设)
-isolation:
-  data: "full"
-  config: "full"
-  state: "full"
-
-# 告警 (3 层)
+# 业务告警 (3 层)
 alerting:
-  biz: "self"               # 业务自给
+  biz: "self"
   pmo: "重大→PMO"
   sponsor: "PMO 重大→Sponsor"

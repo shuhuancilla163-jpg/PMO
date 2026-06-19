@@ -4,6 +4,67 @@
 
 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.12.0] - 2026-06-19
+
+### Added (m2.1 业务元数据 3 项, DEC-2026-0005, 15 → 16 元规则)
+
+**核心完成**: M2 业务基础设施第一项, 业务接入 5 步流程前 3 步基于 m2.1。
+
+#### 元规则 (15 → 16)
+- immutable/0-governance/0.0.16-biz-metadata-3-items.md (新建)
+  - E1 业务项目元数据 (register.yaml 必填字段)
+  - E2 业务数据 schema (业务项目定义, PMO 存 + 验证)
+  - E3 业务术语表 (业务 agent 定义, PMO 验证)
+  - 业务 agent role 不与 5 阶段研发 role 重名 (DEC-2026-0003 边界)
+- immutable/0-governance/README.md (更新, 16 项元规则索引)
+
+#### 业务元数据 3 项 (m2.1)
+- scripts/runtime/biz_metadata/biz_metadata.py (新建, 590 行)
+  - E1 业务项目元数据 (BizMetadataStore.load_e1): 6 大块必填字段验证
+  - E2 业务数据 schema (load_e2): entities + events 验证
+  - E3 业务术语表 (load_e3): terms + roles 验证 + role 边界
+  - 内置简化 YAML 解析器 (不依赖 pyyaml)
+  - PMO 存 config/biz-meta/<id>*.json
+- scripts/runtime/biz_metadata/m2_1_self_test.py (新建)
+  - 3 项验收点 (按 plan)
+  - 输出 tests/m2.1-self-test-report.json
+- scripts/runtime/self_check/self_check.py (更新)
+  - D18 业务元数据 3 项自检接入
+  - 17/18 pass 94.4%
+- docs/m2.1-biz-metadata.md (新建)
+  - 验收 3 项 + E1/E2/E3 规范 + 5 阶段研发 agent 边界 + PMO 存储位置
+
+#### 业务项目元数据补全
+- biz-projects/1.1-pmo-self/data-schema.yaml (新建, 3 实体: task/decision/metric)
+- biz-projects/1.1-pmo-self/glossary.yaml (新建, 7 术语 + 5 业务 agent role)
+- biz-projects/1.2-finance/data-schema.yaml (新建, 4 实体: order/trade/position/risk_metric)
+- biz-projects/1.2-finance/glossary.yaml (新建, 8 术语 + 6 业务 agent role)
+- biz-projects/1.1-pmo-self/register.yaml (升级到 m2.1 嵌套规范)
+- biz-projects/1.2-finance/register.yaml (升级到 m2.1 嵌套规范)
+
+#### 决策 + 版本
+- decisions/active/DEC-2026-0005.json (新建)
+  - 3 块关键设计: E1 业务项目元数据 + E2 业务数据 schema + E3 业务术语表
+  - release_version: v0.12.0
+
+### Changed
+- 15 元规则 → 16 元规则 (新增 0.0.16)
+- 1.1/1.2 业务项目 register.yaml 升级到 m2.1 嵌套规范
+- 业务项目接入 5 步流程前 3 步基于 m2.1 完整实施
+
+### Verification
+- m2.1 自测: 3/3 pass 100%
+- m1.5 自检: 17/18 pass 94.4% (D18 接入, 0 fail)
+- 2 个业务项目 (1.1 + 1.2) 全部成功接入 PMO 实例
+- 6 个 PMO 存储文件 (config/biz-meta/)
+- 11 个业务 agent role 全部不与 5 阶段研发 role 重名
+
+### 关键决策
+- **DEC-2026-0005**: 业务元数据 3 项 (2026-06-19, v0.12.0)
+- 业务项目自定, PMO 存 + 验证
+- 不参与业务数据, 只管元数据
+- 影响: m2.6 注册 + m2.5 契约 + m2.4 执行
+
 ## [0.11.0] - 2026-06-19
 
 ### Added (m1.6 项目间消息流通, DEC-2026-0004, 14 → 15 元规则)

@@ -1,0 +1,149 @@
+{
+  "biz_project_id": "1.2-finance",
+  "item": "E3",
+  "loaded_at": "2026-06-19T02:15:56.901990+00:00",
+  "data": {
+    "biz_glossary": {
+      "version": "1.0",
+      "defined_by": "biz_project",
+      "validated_by": "pmo_instance",
+      "terms": [
+        {
+          "term": "order",
+          "definition": "交易订单, 业务核心实体",
+          "category": "entity",
+          "synonyms": [
+            "委托",
+            "单子"
+          ]
+        },
+        {
+          "term": "trade",
+          "definition": "成交记录, 订单匹配后产生",
+          "category": "entity",
+          "synonyms": [
+            "成交",
+            "执行"
+          ]
+        },
+        {
+          "term": "position",
+          "definition": "持仓, 业务核心状态",
+          "category": "state",
+          "synonyms": [
+            "仓位",
+            "敞口"
+          ]
+        },
+        {
+          "term": "P&L",
+          "definition": "盈亏, 业务核心指标",
+          "category": "metric",
+          "synonyms": [
+            "pnl",
+            "盈亏"
+          ]
+        },
+        {
+          "term": "drawdown",
+          "definition": "回撤, 风险指标",
+          "category": "metric",
+          "synonyms": [
+            "回撤",
+            "DD"
+          ]
+        },
+        {
+          "term": "VaR",
+          "definition": "在险价值, 风险限额指标",
+          "category": "metric",
+          "synonyms": [
+            "var",
+            "风险价值"
+          ]
+        },
+        {
+          "term": "signal",
+          "definition": "交易信号, 量化策略输出",
+          "category": "action",
+          "synonyms": [
+            "信号",
+            "trigger"
+          ]
+        },
+        {
+          "term": "compliance_check",
+          "definition": "合规检查, 订单/交易合规验证",
+          "category": "action",
+          "synonyms": [
+            "合规检查",
+            "compliance"
+          ]
+        }
+      ],
+      "roles": [
+        {
+          "role": "Data-Engineer",
+          "identity": "金融数据工程师",
+          "scope": "市场数据采集/清洗/存储",
+          "uses_terms": [
+            "order",
+            "trade",
+            "position"
+          ]
+        },
+        {
+          "role": "Quant-Analyst",
+          "identity": "量化分析师",
+          "scope": "策略研发/信号生成/回测",
+          "uses_terms": [
+            "signal",
+            "P&L",
+            "drawdown"
+          ]
+        },
+        {
+          "role": "Risk-Manager",
+          "identity": "风险经理",
+          "scope": "风险监控/限额管理/VaR 计算",
+          "uses_terms": [
+            "position",
+            "P&L",
+            "drawdown",
+            "VaR"
+          ]
+        },
+        {
+          "role": "Portfolio-Manager",
+          "identity": "组合经理",
+          "scope": "组合配置/调仓决策",
+          "uses_terms": [
+            "position",
+            "P&L",
+            "signal"
+          ]
+        },
+        {
+          "role": "Compliance-Officer",
+          "identity": "合规官",
+          "scope": "合规检查/审计/监管报告",
+          "uses_terms": [
+            "order",
+            "trade",
+            "compliance_check"
+          ]
+        },
+        {
+          "role": "Reporting-Analyst",
+          "identity": "报告分析师",
+          "scope": "业务报告/指标看板/Sponsor 报告",
+          "uses_terms": [
+            "P&L",
+            "drawdown",
+            "VaR"
+          ]
+        }
+      ]
+    }
+  }
+}

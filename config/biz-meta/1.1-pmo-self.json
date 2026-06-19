@@ -1,0 +1,87 @@
+{
+  "biz_project_id": "1.1-pmo-self",
+  "item": "E1",
+  "loaded_at": "2026-06-19T02:15:56.891114+00:00",
+  "data": {
+    "biz_project": {
+      "id": "1.1-pmo-self",
+      "name": "PMO 系统自建",
+      "type": "pmo-platform",
+      "version": "0.11.0",
+      "sponsor": "Sponsor",
+      "registered_at": "2026-06-18T14:00:00Z"
+    },
+    "pmo_supervision": {
+      "enabled": true,
+      "state": "active",
+      "quota_4d": {
+        "token": "10000000",
+        "time": "unlimited",
+        "storage": "10GB",
+        "concurrency": 5
+      },
+      "isolation_3d": {
+        "data": "full",
+        "config": "independent",
+        "state": "independent"
+      }
+    },
+    "agent_categories": {
+      "eng_roles": {
+        "description": "5 阶段研发 agent (PMO 监管, 0.0.13)",
+        "pmo_supervised": true,
+        "location": "eng-roles/"
+      },
+      "biz_agents": {
+        "description": "业务需求运营 agent (业务自管, 0.0.14)",
+        "pmo_supervised": false,
+        "location": "biz-agents/"
+      }
+    },
+    "compliance_2_layers": {
+      "layer_1_overall": true,
+      "layer_2_eng_5_stages": true
+    },
+    "m2_6_7_items": {
+      "registration": true,
+      "state_machine": true,
+      "quota_4d": true,
+      "archive_4_levels": true,
+      "isolation_3d": true,
+      "alerting_3_levels": true,
+      "checklist_6_plus_3": true
+    },
+    "governance_refs": [
+      "immutable/0-governance/0.0.1-five-values.md",
+      "immutable/0-governance/0.0.7-decoupling-4layers.md",
+      "immutable/0-governance/0.0.8-self-evolution.md",
+      "immutable/0-governance/0.0.9-base-completion.md",
+      "immutable/0-governance/0.0.10-1spec-Nprojects.md"
+    ],
+    "access_path": {
+      "registration": "biz-projects/1.1-pmo-self/register.yaml",
+      "state_machine": "tasks/state/1.1-pmo-self.json",
+      "data_schema": "biz-projects/1.1-pmo-self/data-schema.yaml",
+      "glossary": "biz-projects/1.1-pmo-self/glossary.yaml",
+      "archive": "archive/biz-projects/1.1-pmo-self/",
+      "monitoring": "metrics/business/1.1-pmo-self/",
+      "checklist": "biz-projects/1.1-pmo-self/checklist.md",
+      "contract": "immutable/2-biz-specs/contract-1.1-pmo-self.md"
+    },
+    "metrics": {
+      "business_basic_5": [
+        "flow_latency",
+        "exception_rate",
+        "pass_rate",
+        "rollback_rate",
+        "token_consumption"
+      ],
+      "custom": []
+    },
+    "alerting": {
+      "biz": "self",
+      "pmo": "重大→PMO",
+      "sponsor": "PMO 重大→Sponsor"
+    }
+  }
+}

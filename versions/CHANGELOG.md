@@ -4,6 +4,29 @@
 
 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.7.0] - 2026-06-19
+
+### Added (m1.3 核心执行, 7 项工具 + DEC-2026-0002 2 项)
+- scripts/runtime/core_execution/core_execution.py:
+  - C1 阶段流转引擎 (P0-P9 状态机) PhaseFlowEngine
+  - C2 阶段门控验收 PhaseGateValidator
+  - C3 决策日志工具 (SQLite) DecisionLog
+  - C6 不可变文档签名 (Git + sha256) ImmutableDocSigner
+  - C9 Sponsor 介入面板 SponsorDashboard
+  - C10 角色性格 prompt 加载器 PersonalityLoader
+  - C15 角色身份加载器 (含 L? 注入) RoleIdentityLoader
+  - DEC-2026-0002: 3 维度分别考核 (Assessor-Agent) ThreeDimensionAssessment
+  - DEC-2026-0002: 3 维度监控 ThreeDimensionMonitor
+- decisions/decision-log.db (新建, SQLite 决策日志)
+- docs/m1.3-core-execution.md (新建, 7 项 + DEC-2026-0002 2 项 + 验收 + API)
+
+### 验收 (5 项)
+- 7 项核心执行可跑 ✅
+- 业务/治理/工程指标可采 ✅
+- PMO 规范不参与业务可验证 ✅
+- 3 维度分别考核 ✅
+- 3 维度监控 ✅
+
 ## [0.6.0] - 2026-06-19
 
 ### Added (m0.5 运行时自测, 12 项 100% pass, DEC-2026-0002)

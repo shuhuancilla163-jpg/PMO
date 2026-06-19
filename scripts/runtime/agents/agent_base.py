@@ -240,8 +240,9 @@ class EngineerAgent(PMOAgent):
     }
     
     def __init__(self, pmo_root: str):
-        super().__init__("Engineer-Agent", "司法权 (工程, 维度 2 采集: 研发 5 阶段)", "L2", pmo_root)
-        # 5 阶段数据采集 (按项目 + 阶段)
+        super().__init__("Engineer-Agent", "司法权 (工程, 维度 2 采集: 业务项目研发 5 阶段上报)", "L2", pmo_root)
+        # 维度 2 数据采集 (DEC-2026-0003: 5 阶段 agent 物理位置在业务项目内)
+        # 5 阶段 agent 由业务项目在 eng-roles/ 实施, PMO 只采业务项目上报数据, 不实施 agent
         self.eng_data: Dict[str, Dict[str, List[Dict[str, Any]]]] = {}
     
     def audit_pmo_main(self, pmo_main: PMOMainAgent) -> Dict[str, Any]:
@@ -258,7 +259,11 @@ class EngineerAgent(PMOAgent):
         return audit
     
     def collect_eng_stage_data(self, project_id: str, stage: str, data: Dict[str, Any]) -> bool:
-        """采集业务项目内研发 5 阶段数据 (维度 2)"""
+        """采集业务项目内研发 5 阶段数据 (维度 2, DEC-2026-0003)
+        
+        数据源: 业务项目 eng-roles/ 上报 (5 阶段 agent 物理位置在业务项目内)
+        PMO 不实施 5 阶段 agent, 只采集业务项目上报
+        """
         if stage not in self.ENG_5_STAGES:
             self.log_reflection("error", f"研发阶段非法: {stage}")
             return False
@@ -272,7 +277,10 @@ class EngineerAgent(PMOAgent):
         return True
     
     def get_eng_5_stages_status(self, project_id: str) -> Dict[str, Any]:
-        """获取业务项目内研发 5 阶段状态 (维度 2)"""
+        """获取业务项目内研发 5 阶段状态 (维度 2, DEC-2026-0003)
+        
+        5 阶段 agent 物理位置在业务项目内 (eng-roles/), PMO 采业务项目上报数据
+        """
         if project_id not in self.eng_data:
             return {s: {"collected": 0, "pmo_compliance": self.ENG_5_STAGES_PMO_COMPLIANCE[s]} for s in self.ENG_5_STAGES}
         return {

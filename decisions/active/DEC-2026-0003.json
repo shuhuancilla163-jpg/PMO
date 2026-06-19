@@ -1,0 +1,53 @@
+{
+  "decision_id": "DEC-2026-0003",
+  "timestamp": "2026-06-19T01:38:00Z",
+  "title": "5 阶段 agent 修正: 物理位置移到业务项目内, PMO 只给初始模板 + 规范 + 监督",
+  "category": "governance-change",
+  "context": "DEC-2026-0002 引入了业务项目 2 层合规 + 3 维度架构, 但 5 阶段 agent 的实施位置未明文: (1) 0.0.11 写'PMO 预设, 业务项目可调', 含义模糊 ('预设' 是 PMO 实施?); (2) 0.0.12 写'L2 PMO-Engineer-Agent 按阶段采', 未说明 5 阶段 agent 物理位置; (3) 业务项目接入缺模板, 自己写 5 阶段 agent 时无 PMO 初始模板可参考; (4) 业务项目内 2 类 agent (5 阶段 vs 业务需求运营) 边界未明文。Sponsor 关键点出: 5 阶段 agent 是业务项目内实施的 agent, PMO 只是标准约束监督的职责。",
+  "decision": "5 阶段 agent 修正 4 块关键调整: (1) 5 阶段 agent 物理位置在业务项目内 (biz-projects/<id>/eng-roles/), 由业务项目实施; (2) PMO 不实施 5 阶段 agent, 只提供初始模板 (PMO/templates/eng-roles/) + 输入输出规范 (0.0.13) + PMO 7 项合规监督; (3) 业务项目可调 5 阶段 agent (基于 PMO 模板 + 结合业务), 但必须符合 PMO 7 项合规; (4) 业务需求运营 agent 业务项目自定 (0.0.14), PMO 不预设不干预 (不固定 8 个)。",
+  "rationale": "PMO 监督 = SEC 监管上市公司, 看 5 阶段上报数据是否合规, 不看具体业务内容。5 阶段是项目研发通用方法论 (需求/研发/测试/运维/评估), 业务项目可基于 PMO 模板调整适配业务 (如简化 2 阶段、加业务特定子阶段), 但必须符合 PMO 7 项合规 (阶段门控/决策日志/不可变文档/异常拦截/指标可贯彻/3 层告警/Sponsor 报告)。业务需求运营 agent 完全由业务项目按业务场景配置, PMO 不干预内容。",
+  "alternatives_considered": [
+    "PMO 实施 5 阶段 agent (业务项目 import 复用, 之前设计倾向)",
+    "PMO 给初始模板 + 业务项目实施/调整 (本决策方案, 业务项目自主性高)",
+    "PMO 完全不管 5 阶段, 业务项目 100% 自定 (放弃 PMO 监管, 不接受)"
+  ],
+  "impact_analysis": {
+    "scope": "PMO 治理层 + agent 设计 + 业务接入路径 + 业务项目流程",
+    "affected_projects": ["1.1-pmo-self", "1.2-finance"],
+    "risk": "low"
+  },
+  "actor": "L0 Sponsor (与 PMO 平等讨论后定)",
+  "sponsor_approved": true,
+  "approval_timestamp": "2026-06-19T01:38:00Z",
+  "implementation": {
+    "files_affected": [
+      "immutable/0-governance/0.0.11-biz-project-2layer-compliance.md",
+      "immutable/0-governance/0.0.12-3dimension-architecture.md",
+      "immutable/0-governance/0.0.13-eng-5-stages-spec.md",
+      "immutable/0-governance/0.0.14-biz-ops-roles-self-define.md",
+      "immutable/0-governance/README.md",
+      "templates/eng-roles/",
+      "biz-projects/templates/contract-eng-5-stages.md",
+      "biz-projects/templates/contract-project-overall.md",
+      "biz-projects/templates/contract-biz-ops-roles.md",
+      "biz-projects/1.1-pmo-self/eng-roles/",
+      "biz-projects/1.2-finance/",
+      "config/pmo.config.yaml",
+      "scripts/runtime/agents/agent_base.py",
+      "scripts/runtime/core_execution/core_execution.py",
+      "docs/m1.3-core-execution.md",
+      "docs/m1.4-8-pmo-roles.md",
+      "docs/3-dimension-architecture.md",
+      "docs/m0.1-storage.md",
+      "versions/CHANGELOG.md",
+      "README.md"
+    ],
+    "commits": [],
+    "release_version": "v0.10.0"
+  },
+  "links": {
+    "related_decisions": ["DEC-2026-0001", "DEC-2026-0002"],
+    "discussion": "Plan mode 评估修改范围, Sponsor 推动 4 块调整",
+    "followup": "实施 4 块调整, 12 元规则 → 14 元规则, v0.10.0 提交"
+  }
+}

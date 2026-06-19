@@ -1,0 +1,56 @@
+# 业务项目 1.2-finance eng-roles/ 注册
+# 元规则: 0.0.13 + DEC-2026-0003
+# 业务场景: 量化金融
+
+eng_5_stages:
+  biz_project_id: "1.2-finance"
+  pmo_compliance_version: "0.0.13"
+  template_source: "PMO/templates/eng-roles/"
+  biz_scenario: "量化金融 (策略研究/回测/风控/组合管理/合规/报告)"
+
+  stages:
+
+    # 1. 需求阶段 (可选)
+    requirement:
+      enabled: true
+      agent_class: "eng_roles.01_requirement_engineer.RequirementEngineer"
+      customization: "加 financial_markets / trading_strategies / risk_constraints + quant_strategy_spec / risk_policy_doc"
+      pmo_7_compliance: 7
+      pm0_supervised: true
+
+    # 2. 研发阶段 (必选)
+    development:
+      enabled: true
+      agent_class: "eng_roles.02_development_engineer.DevelopmentEngineer"
+      customization: "Python + pandas/numpy/scikit-learn/zipline/backtrader, 加 quant_strategy_code / backtest_engine_code"
+      pmo_7_compliance: 7
+      pm0_supervised: true
+
+    # 3. 测试阶段 (必选)
+    test:
+      enabled: true
+      agent_class: "eng_roles.03_test_engineer.TestEngineer"
+      customization: "加 historical_market_data + backtest_results (夏普/最大回撤) + risk_metrics_validation"
+      pmo_7_compliance: 7
+      pm0_supervised: true
+
+    # 4. 运维阶段 (必选)
+    operations:
+      enabled: true
+      agent_class: "eng_roles.04_operations_engineer.OperationsEngineer"
+      customization: "加 market_data_feeds + market_data_backup (10年合规) + trading_system_sla (99.99%)"
+      pmo_7_compliance: 7
+      pm0_supervised: true
+
+    # 5. 评估阶段 (可选)
+    evaluation:
+      enabled: true
+      agent_class: "eng_roles.05_evaluation_engineer.EvaluationEngineer"
+      customization: "加 pnl_history + strategy_attribution + risk_adjusted_return (sharpe 1.8)"
+      pmo_7_compliance: 7
+      pm0_supervised: true
+
+  reporting:
+    schedule: "每阶段完成后"
+    destination: "PMO L2 Engineer-Agent"
+    format: "yaml"

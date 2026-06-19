@@ -1,0 +1,61 @@
+# 业务项目 eng-roles/ 注册模板 (YAML 契约)
+# 业务项目接入 PMO 时, 必须有此文件
+# 元规则: 0.0.13 + DEC-2026-0003
+
+eng_5_stages:
+  biz_project_id: "<biz_project_id>"  # 业务项目 ID (如 1.2-finance)
+  pmo_compliance_version: "0.0.13"   # PMO 规范版本
+  template_source: "PMO/templates/eng-roles/"  # 模板来源
+
+  # 5 阶段 agent 配置
+  stages:
+
+    # 1. 需求阶段 (可选)
+    requirement:
+      enabled: true  # 业务项目可关闭 (false = 跳过)
+      agent_class: "eng_roles.01_requirement_engineer.RequirementEngineer"
+      customization: ""  # 业务项目调整说明 (可填: 业务建模子阶段 / 简化 / 扩展)
+      pmo_7_compliance: 7  # 必须 ≥ 7
+      pm0_supervised: true  # PMO 监管 (固定 true)
+
+    # 2. 研发阶段 (必选)
+    development:
+      enabled: true  # 必选, 不可 false
+      agent_class: "eng_roles.02_development_engineer.DevelopmentEngineer"
+      customization: ""  # 业务项目调整说明 (可填: Python + 量化库 / Go / Rust)
+      pmo_7_compliance: 7  # 必须 ≥ 7
+      pm0_supervised: true  # PMO 监管 (固定 true)
+
+    # 3. 测试阶段 (必选)
+    test:
+      enabled: true  # 必选, 不可 false
+      agent_class: "eng_roles.03_test_engineer.TestEngineer"
+      customization: ""  # 业务项目调整说明 (可填: 策略回测测试 / AB 测试)
+      pmo_7_compliance: 7  # 必须 ≥ 7
+      pm0_supervised: true  # PMO 监管 (固定 true)
+
+    # 4. 运维阶段 (必选)
+    operations:
+      enabled: true  # 必选, 不可 false
+      agent_class: "eng_roles.04_operations_engineer.OperationsEngineer"
+      customization: ""  # 业务项目调整说明 (可填: 金融数据灾备 / K8s 扩缩容)
+      pmo_7_compliance: 7  # 必须 ≥ 7
+      pm0_supervised: true  # PMO 监管 (固定 true)
+
+    # 5. 评估阶段 (可选)
+    evaluation:
+      enabled: true  # 业务项目可关闭 (false = 跳过)
+      agent_class: "eng_roles.05_evaluation_engineer.EvaluationEngineer"
+      customization: ""  # 业务项目调整说明 (可填: 夏普比率/最大回撤评估)
+      pmo_7_compliance: 7  # 必须 ≥ 7
+      pm0_supervised: true  # PMO 监管 (固定 true)
+
+  # 上报配置
+  reporting:
+    schedule: "每阶段完成后"  # 业务项目可调
+    destination: "PMO L2 Engineer-Agent"
+    format: "yaml"
+
+  # 业务项目可选项 (业务项目自定)
+  biz_specific:
+    - ""  # 业务项目可加业务特定配置

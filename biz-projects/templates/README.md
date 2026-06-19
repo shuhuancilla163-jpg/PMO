@@ -2,7 +2,7 @@
 
 **每个业务项目按 1 套模板创建** (0.0.10 1 套规范)。
 
-## 模板结构 (DEC-2026-0002 调整后)
+## 模板结构 (DEC-2026-0002 + DEC-2026-0003 调整后)
 
 ```
 biz-projects/<biz-project-id>/
@@ -17,12 +17,21 @@ biz-projects/<biz-project-id>/
 ├── state/                 # 业务状态 (项目内)
 │   ├── current.json       # 当前状态
 │   └── history/           # 状态历史
-├── eng-roles/             # 业务项目研发 5 阶段 (新, DEC-2026-0002)
-│   ├── requirement.yaml   # 需求阶段角色
-│   ├── development.yaml   # 研发阶段角色
-│   ├── test.yaml          # 测试阶段角色
-│   ├── operations.yaml    # 运维阶段角色
-│   └── evaluation.yaml    # 评估阶段角色
+├── eng-roles/             # 业务项目研发 5 阶段 agent (DEC-2026-0002, 强化于 DEC-2026-0003)
+│   ├── 01-requirement-engineer.py   # 需求阶段 agent (业务项目从 PMO 模板复制)
+│   ├── 02-development-engineer.py   # 研发阶段 agent (必选, 业务项目实施)
+│   ├── 03-test-engineer.py          # 测试阶段 agent (必选, 业务项目实施)
+│   ├── 04-operations-engineer.py    # 运维阶段 agent (必选, 业务项目实施)
+│   ├── 05-evaluation-engineer.py    # 评估阶段 agent (业务项目实施)
+│   ├── register.yaml                # eng-roles/ 注册
+│   └── README.md
+├── biz-agents/            # 业务需求运营 agent (新, DEC-2026-0003, 业务自管)
+│   ├── 01-data-engineer.py          # 业务 agent 1 (业务项目自定)
+│   ├── 02-quant-analyst.py          # 业务 agent 2 (业务项目自定)
+│   ├── ...                          # 业务项目自定
+│   └── README.md
+├── reports/                   # 5 阶段上报 (PMO 采集源)
+└── biz-data/                  # 业务数据 (业务项目自存, PMO 不存)
 ├── requirement/           # 需求阶段产出 (新, DEC-2026-0002)
 ├── development/           # 研发阶段产出 (新, DEC-2026-0002)
 ├── test/                  # 测试阶段产出 (新, DEC-2026-0002)
@@ -44,20 +53,21 @@ biz-projects/<biz-project-id>/
     └── resource/
 ```
 
-## 业务项目接入 5 步流程 (DEC-2026-0002)
+## 业务项目接入 5 步流程 (DEC-2026-0002 + DEC-2026-0003)
 
-1. **业务项目注册** (m2.6 业务注册) — 填 `register.yaml` + 签 2 份契约
-2. **业务项目内研发 5 阶段声明** (m2.3 + m2.6) — 在 `eng-roles/` 声明
-3. **业务项目内业务配置** (业务项目自管) — 业务场景/业务 agent/业务流程/业务异常/业务指标
+1. **业务项目注册** (m2.6 业务注册) — 填 `register.yaml` + 签 3 份契约 (整体 + 5 阶段 + 业务 agent 自愿)
+2. **业务项目内研发 5 阶段实施** (m2.3 + m2.6, DEC-2026-0003) — 从 `PMO/templates/eng-roles/` 复制到 `eng-roles/`, 按业务调整实施
+3. **业务项目内业务 agent 自定** (业务自管, DEC-2026-0003) — 业务项目在 `biz-agents/` 自定业务 agent
 4. **业务项目接入 PMO 消息机制** (m2.5 跨边界契约) — `messaging.yaml`
-5. **业务项目接入 PMO 监管** (m1.3 + m0.4) — `reports/` 上报关键指标
+5. **业务项目接入 PMO 监管** (m1.3 + m0.4) — `reports/` 上报 5 阶段关键指标
 
 详细见: [业务项目接入 PMO 5 步流程](../docs/biz-project-onboarding-5-steps.md)
 
-## 契约模板 (DEC-2026-0002)
+## 契约模板 (DEC-2026-0002 + DEC-2026-0003)
 
 - [业务项目整体契约模板](./contract-project-overall.md) — 业务项目 ID/名称/类型 + m2.6 7 项
-- [业务项目研发 5 阶段契约模板](./contract-eng-5-stages.md) — 5 阶段角色 + PMO 7 项
+- [业务项目研发 5 阶段契约模板](./contract-eng-5-stages.md) — 5 阶段 agent (PMO 监管, 0.0.13)
+- [业务需求运营 agent 契约模板](./contract-biz-ops-roles.md) — 业务 agent (业务自管, 0.0.14, 新增 DEC-2026-0003)
 
 ## 接入步骤
 
@@ -73,14 +83,15 @@ biz-projects/<biz-project-id>/
 10. 通知 PMO 实例 (m2.6 业务注册流程)
 11. 业务项目状态 = active, 接入 PMO
 
-## 关键 (DEC-2026-0002)
+## 关键 (DEC-2026-0002 + DEC-2026-0003)
 
 - **1 套模板, N 项目复用** (0.0.10)
 - **业务项目自管** (业务 agent/业务流程/业务异常/业务指标)
 - **PMO 实例监管** (注册/配额/隔离/异常拦截/上报合规)
 - **Sponsor 监督** (重大决策, 指标看板, MVP 验收)
 - **3 维度架构** (业务项目整体 / 研发 5 阶段 / 业务项目内业务)
-- **5 阶段研发角色** (PMO 监管, 业务项目可调)
+- **5 阶段研发角色** (业务项目内实施, PMO 给模板 + 规范 + 监督, 0.0.13)
+- **业务需求运营 agent** (业务项目完全自定, PMO 不预设不干预, 0.0.14)
 - **3 层上报机制** (业务自采 + 业务上报 + PMO 存上报)
 - **3 维度分别考核** (PMO-Assessor-Agent)
 - **项目间消息经 PMO 中介** (PMO-Message-Broker-Agent)

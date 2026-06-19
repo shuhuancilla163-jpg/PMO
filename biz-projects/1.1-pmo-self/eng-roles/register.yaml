@@ -1,0 +1,54 @@
+# 业务项目 1.1-pmo-self eng-roles/ 注册 (YAML 契约)
+# 元规则: 0.0.13 + DEC-2026-0003
+
+eng_5_stages:
+  biz_project_id: "1.1-pmo-self"
+  pmo_compliance_version: "0.0.13"
+  template_source: "PMO/templates/eng-roles/"
+
+  stages:
+
+    # 1. 需求阶段 (可选)
+    requirement:
+      enabled: true
+      agent_class: "eng_roles.01_requirement_engineer.RequirementEngineer"
+      customization: "PMO 自建项目需求: 1 套规范 + N 项目"
+      pmo_7_compliance: 7
+      pm0_supervised: true
+
+    # 2. 研发阶段 (必选)
+    development:
+      enabled: true
+      agent_class: "eng_roles.02_development_engineer.DevelopmentEngineer"
+      customization: "Python 3.11, 8 PMO 角色 + 3 维度架构"
+      pmo_7_compliance: 7
+      pm0_supervised: true
+
+    # 3. 测试阶段 (必选)
+    test:
+      enabled: true
+      agent_class: "eng_roles.03_test_engineer.TestEngineer"
+      customization: "m0.5 12 项 + m1.5 16 项 + 性能基线 12 项"
+      pmo_7_compliance: 7
+      pm0_supervised: true
+
+    # 4. 运维阶段 (必选)
+    operations:
+      enabled: true
+      agent_class: "eng_roles.04_operations_engineer.OperationsEngineer"
+      customization: "Docker + start.sh, 3 层告警, Git 灾备"
+      pmo_7_compliance: 7
+      pm0_supervised: true
+
+    # 5. 评估阶段 (可选)
+    evaluation:
+      enabled: true
+      agent_class: "eng_roles.05_evaluation_engineer.EvaluationEngineer"
+      customization: "M0 + M1 评估, 自进化提案"
+      pmo_7_compliance: 7
+      pm0_supervised: true
+
+  reporting:
+    schedule: "每阶段完成后"
+    destination: "PMO L2 Engineer-Agent"
+    format: "yaml"

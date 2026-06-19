@@ -4,6 +4,86 @@
 
 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.10.0] - 2026-06-19
+
+### Added (DEC-2026-0003 5 阶段 agent 修正, 12 → 14 元规则)
+
+**核心修正**: 5 阶段 agent 物理位置移到业务项目内, PMO 只给初始模板 + 规范 + 监督
+
+#### 元规则 (12 → 14)
+- immutable/0-governance/0.0.11-biz-project-2layer-compliance.md (更新)
+  - 第 37 行 "PMO 预设" → "PMO 给初始模板, 业务项目实施/调整"
+  - 加 "业务项目内 2 类 agent 边界" 段
+- immutable/0-governance/0.0.12-3dimension-architecture.md (更新)
+  - 维度 2: 5 阶段 agent 物理位置在业务项目内, PMO 采上报数据
+  - 加 "5 阶段 agent 物理位置 (DEC-2026-0003)" 关键洞察
+- immutable/0-governance/0.0.13-eng-5-stages-spec.md (新建)
+  - 5 阶段 agent 输入输出规范
+  - 5 阶段 (requirement/development/test/operations/evaluation) 通用接口
+  - PMO 7 项合规清单
+  - 业务项目可调但不可减
+- immutable/0-governance/0.0.14-biz-ops-roles-self-define.md (新建)
+  - 业务需求运营 agent 业务项目自定原则
+  - PMO 不预设不干预 (不固定 8 个)
+  - 业务 agent vs 5 阶段 agent 边界
+- immutable/0-governance/README.md (更新, 14 项元规则索引)
+
+#### PMO 5 阶段初始模板 (新建, 8 文件)
+- templates/eng-roles/README.md (模板使用说明)
+- templates/eng-roles/01-requirement-engineer.template.md
+- templates/eng-roles/02-development-engineer.template.md
+- templates/eng-roles/03-test-engineer.template.md
+- templates/eng-roles/04-operations-engineer.template.md
+- templates/eng-roles/05-evaluation-engineer.template.md
+- templates/eng-roles/eng-roles-register.template.yaml
+- templates/eng-roles/pmo-7-compliance-check.template.md
+
+#### 业务项目演示 (DEC-2026-0003 5 阶段修正后)
+- biz-projects/1.1-pmo-self/eng-roles/ (新建, 7 文件)
+  - 5 阶段 agent (.py) + register.yaml + README.md
+  - 演示: PMO 自建项目从 PMO 模板复制 + 业务调整
+- biz-projects/1.2-finance/ (新建, 完整业务项目)
+  - 5 阶段 agent (eng-roles/, 7 文件) — 业务调整 (Python + 量化库)
+  - 6 业务 agent (biz-agents/, 7 文件) — 业务项目自定 (Data-Engineer/Quant-Analyst/Risk-Manager/Portfolio-Manager/Compliance-Officer/Reporting-Analyst)
+  - reports/ (3 上报文件)
+  - biz-data/ (业务数据自存, PMO 不存)
+
+#### 业务项目契约模板 (更新 + 新建)
+- biz-projects/templates/contract-eng-5-stages.md (更新, 引用 0.0.13)
+- biz-projects/templates/contract-project-overall.md (更新, 加 2 类 agent 边界)
+- biz-projects/templates/contract-biz-ops-roles.md (新建, 业务 agent 契约)
+- biz-projects/templates/README.md (更新, 3 契约模板 + 接入流程调整)
+
+#### 配置 + 代码 + 文档 (更新)
+- config/pmo.config.yaml (更新)
+  - 5 阶段实施位置: biz-projects/<id>/eng-roles/
+  - 模板源: PMO/templates/eng-roles/
+  - 元规则引用: 0.0.13 + 0.0.14
+  - 业务 agent 位置: biz-projects/<id>/biz-agents/ (业务自管)
+  - biz-projects 列表: 1.2-finance 改为 active (演示业务项目)
+- scripts/runtime/agents/agent_base.py (更新)
+  - Engineer-Agent 注释加 "5 阶段 agent 物理位置在业务项目内, PMO 采上报"
+  - collect_eng_stage_data / get_eng_5_stages_status docstring 更新
+- docs/m1.4-8-pmo-roles.md (更新, 8 PMO 角色 + DEC-2026-0003 关键说明)
+
+#### 决策 + 版本
+- decisions/active/DEC-2026-0003.json (新建)
+  - 5 阶段 agent 修正决策
+  - 4 块关键调整: 物理位置 + PMO 不实施 + 业务项目可调 + 业务 agent 自定
+  - 12 → 14 元规则
+  - release_version: v0.10.0
+
+### Changed
+- 12 元规则 → 14 元规则 (新增 0.0.13 + 0.0.14)
+- 5 阶段 agent 物理位置: 业务项目内 (`eng-roles/`)
+- 业务项目接入 5 步流程: 加 5 阶段 agent 从 PMO 模板复制 + 调整
+
+### Key Decisions
+- **DEC-2026-0003**: 5 阶段 agent 修正 (2026-06-19, v0.10.0)
+- 5 阶段 agent 在业务项目内实施
+- PMO 不实施 5 阶段 agent, 只给模板 + 规范 + 监督
+- 业务需求运营 agent 业务项目自定 (0.0.14, PMO 不预设不干预)
+
 ## [0.9.0] - 2026-06-19
 
 ### Added (m1.5 PMO 自检, 9 项 + DEC-2026-0002 3 项 + 4 项机制)

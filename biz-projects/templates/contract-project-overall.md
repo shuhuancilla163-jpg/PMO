@@ -1,4 +1,4 @@
-# 业务项目整体契约模板 (DEC-2026-0002)
+# 业务项目整体契约模板 (DEC-2026-0002 + DEC-2026-0003)
 
 **业务项目接入 PMO 实例时必签契约 1: 业务项目整体契约**
 
@@ -8,6 +8,12 @@
 版本: `<biz-project-version>`
 Sponsor: `<sponsor-name>`
 注册时间: `<registered-at>`
+
+**元规则**: 0.0.10 + 0.0.11 + 0.0.14 (DEC-2026-0003 业务 agent 自定原则)
+
+**关键 (DEC-2026-0003)**:
+- 业务项目内 **eng-roles/** = 5 阶段 agent (PMO 监管, 0.0.13)
+- 业务项目内 **biz-agents/** = 业务 agent (业务自管, 0.0.14, PMO 不干预)
 
 ## 业务项目整体符合 PMO (m2.6 7 项)
 
@@ -46,6 +52,22 @@ Sponsor: `<sponsor-name>`
 - `biz-self`: 业务自给 (业务项目自处理)
 - `pmo`: 重大→PMO (升级到 PMO 实例)
 - `sponsor`: PMO 重大→Sponsor (升级到 Sponsor)
+
+## 业务项目内 2 类 agent 边界 (DEC-2026-0003)
+
+**业务项目内 agent 严格分 2 类**:
+
+### 1. 5 阶段研发 agent (PMO 监管)
+- 物理位置: `biz-projects/<biz_project_id>/eng-roles/`
+- 元规则: 0.0.13
+- 业务项目从 `PMO/templates/eng-roles/` 复制模板 + 调整实施
+- PMO Engineer-Agent 监督 7 项合规
+
+### 2. 业务需求运营 agent (业务自管)
+- 物理位置: `biz-projects/<biz_project_id>/biz-agents/`
+- 元规则: 0.0.14
+- 业务项目完全自定 (数量/名字/责任/输入输出)
+- PMO **不预设不干预**
 
 ## 业务项目维度 1 考核 (L2 PMO-Assessor-Agent)
 

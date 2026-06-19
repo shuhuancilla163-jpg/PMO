@@ -4,6 +4,36 @@
 
 格式参考 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)。
 
+## [0.3.0] - 2026-06-19
+
+### Added (m0.3 部署环境, DEC-2026-0002 实施)
+- 本地 PMO 启动 (bash scripts/start.sh)
+- Cursor harness 集成 (仓库存放 + .cursor/ 配置)
+- 容器部署 (Dockerfile + docker-compose.yml, 8 PMO 角色健康检查)
+- 知识存储 (12 项元规则 0.0.1-0.0.12, Git 不可变)
+- 性能基线 (12 项, 8 PMO 角色 + 3 维度分离)
+- docs/m0.3-deployment.md (新建, 部署架构 + 启动方式 + 验收)
+
+### Changed
+- Dockerfile: 5 agent → 8 agent 健康检查 (DEC-2026-0002)
+- docker-compose.yml: 5 agent → 8 agent + PMO_ROLES_COUNT 环境变量
+- start.sh: 5 agent → 8 agent 启动横幅 + 启动后状态
+- perf_benchmark.py: 加 3 维度采集 + Assessor + Message-Broker 基准, psutil 可选
+
+### 关键基线
+- PMO 启动耗时基线: ~1.0ms
+- 8 agent 激活基线: ~0.3ms (平均 0.04ms/agent)
+- 维度 1 业务项目注册基线: 0.01ms/项目
+- 维度 2 研发 5 阶段采集基线: 0.02ms/采集
+- 维度 3 业务项目上报基线: 0.02ms/上报
+- Assessor 3 维度考核基线: 0.08ms/考核
+- Message-Broker 项目间消息基线: 0.03ms/消息
+- 业务流耗时基线: ~0.1ms (10 状态转换)
+- 异常拦截基线: 0.05ms/次
+- 通信基线: 0.02ms/条
+- 指标采集基线: 0.01ms/次
+- L2 6 agent 审计 L1 基线: ~0.8ms
+
 ## [0.2.3] - 2026-06-19
 
 ### Added (m1.1 元规则, 8 → 12 项, DEC-2026-0002 实施)

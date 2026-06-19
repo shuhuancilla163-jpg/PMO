@@ -22,6 +22,7 @@ class MetricCategory(str, Enum):
     BUSINESS = "business"
     GOVERNANCE = "governance"
     ENGINEERING = "engineering"
+    TOOL = "tool"  # 维度 4: 工程工具生态 (DEC-2026-0009)
 
 
 class Metric:
@@ -80,6 +81,7 @@ class MetricsCollector:
         self._init_business_metrics()
         self._init_governance_metrics()
         self._init_engineering_metrics()
+        self._init_tool_metrics()
     
     def _init_business_metrics(self):
         """业务指标 5 项 (Q13)"""
@@ -122,6 +124,18 @@ class MetricsCollector:
         ]
         for mid, name, unit, scope, purpose in eng_metrics:
             self.metrics[mid] = Metric(mid, name, MetricCategory.ENGINEERING, unit, scope, purpose)
+
+    def _init_tool_metrics(self):
+        """工程工具指标 (维度 4, DEC-2026-0009)"""
+        tool_metrics = [
+            ("TOOL-M-001", "scanned_tools_total", "个", "scout-agent", "扫描工具总数"),
+            ("TOOL-M-002", "recommended_tools_accepted", "个", "scout-agent", "Sponsor 采纳推荐数"),
+            ("TOOL-M-003", "evaluation_coverage_languages", "种", "scout-agent", "评估覆盖语言数"),
+            ("TOOL-M-004", "rising_projects_count", "个", "scout-agent", "新晋项目数（首次进入 Top 20）"),
+            ("TOOL-M-005", "average_score", "分", "scout-agent", "平均评分"),
+        ]
+        for mid, name, unit, scope, purpose in tool_metrics:
+            self.metrics[mid] = Metric(mid, name, MetricCategory.TOOL, unit, scope, purpose)
     
     def record(self, metric_id: str, value: float, context: Dict[str, Any] = None):
         """记录指标"""
@@ -140,12 +154,14 @@ class MetricsCollector:
                 "by_category": {
                     "business": sum(1 for m in self.metrics.values() if m.category == MetricCategory.BUSINESS),
                     "governance": sum(1 for m in self.metrics.values() if m.category == MetricCategory.GOVERNANCE),
-                    "engineering": sum(1 for m in self.metrics.values() if m.category == MetricCategory.ENGINEERING)
+                    "engineering": sum(1 for m in self.metrics.values() if m.category == MetricCategory.ENGINEERING),
+                    "tool": sum(1 for m in self.metrics.values() if m.category == MetricCategory.TOOL),
                 }
             },
             "business": [m.to_dict() for m in self.metrics.values() if m.category == MetricCategory.BUSINESS],
             "governance": [m.to_dict() for m in self.metrics.values() if m.category == MetricCategory.GOVERNANCE],
-            "engineering": [m.to_dict() for m in self.metrics.values() if m.category == MetricCategory.ENGINEERING]
+            "engineering": [m.to_dict() for m in self.metrics.values() if m.category == MetricCategory.ENGINEERING],
+            "tool": [m.to_dict() for m in self.metrics.values() if m.category == MetricCategory.TOOL],
         }
     
     def save(self, path: Path):
@@ -204,14 +220,24 @@ if __name__ == "__main__":
     collector.record("ENG-M-007", 10.0, {})  # 存储 10MB
     collector.record("ENG-M-008", 1.0, {})  # 并发 1
     print("  - 工程指标 8 项已记录\n")
-    
+
+    # 3b. 跑批 3b: 工具侦察指标 (DEC-2026-0009, 维度 4)
+    print("[3b] 跑批 3b: 工具侦察指标 (维度 4)")
+    collector.record("TOOL-M-001", 100.0, {"action": "scan", "languages": ["Python", "TypeScript", "Go", "Rust"]})
+    collector.record("TOOL-M-002", 0.0, {"action": "recommend", "accepted": 0})
+    collector.record("TOOL-M-003", 4.0, {"languages": ["Python", "TypeScript", "Go", "Rust"]})
+    collector.record("TOOL-M-004", 3.0, {"rising": ["project-a", "project-b", "project-c"]})
+    collector.record("TOOL-M-005", 72.5, {"top_20_average": True})
+    print("  - 工具指标 5 项已记录\n")
+
     # 4. 指标看板 (Sponsor 看)
     print("[4] 指标看板 (Sponsor 看, 指标可贯彻)")
     dashboard = collector.get_dashboard()
     print(f"  - 总指标: {dashboard['summary']['total_metrics']} 项")
     print(f"  - 业务: {dashboard['summary']['by_category']['business']} 项")
     print(f"  - 治理: {dashboard['summary']['by_category']['governance']} 项")
-    print(f"  - 工程: {dashboard['summary']['by_category']['engineering']} 项\n")
+    print(f"  - 工程: {dashboard['summary']['by_category']['engineering']} 项")
+    print(f"  - 工具: {dashboard['summary']['by_category']['tool']} 项\n")
     
     # 5. 保存指标
     output = Path(PMO_ROOT) / "metrics" / "runtime" / "dashboard-2026-06-18.json"

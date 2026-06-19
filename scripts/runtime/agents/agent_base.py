@@ -1,6 +1,6 @@
 """
 PMO Agent 基类 (agent_base.py)
-- 8 个 PMO 核心 agent (三权分立 + 3 维度分离, DEC-2026-0002)
+- 9 个 PMO 核心 agent (三权分立 + 3 维度分离, DEC-2026-0002 + DEC-2026-0009)
   - L0 Sponsor (人机, 监督权)
   - L1 PMO-Main (1 个实例, 行政权, 维度 1: 业务项目整体)
   - L2 Plan-Agent (司法权, 计划/治理)
@@ -9,6 +9,7 @@ PMO Agent 基类 (agent_base.py)
   - L2 Reviewer-Agent (司法权, 审查/审计)
   - L2 Assessor-Agent (司法权, 3 维度分别考核)
   - L2 Message-Broker-Agent (司法权, 项目间消息, 委托 m1.6 MessageBroker)
+  - L2 Scout-Agent (司法权, 维度 4: 工程工具生态, DEC-2026-0009)
 - agent 状态机 (idle/activated/running/suspended/completed/error)
 - 反射 (introspection, 看自己状态)
 - 3 维度采集角色严格分离 (DEC-2026-0002)
@@ -703,17 +704,17 @@ class SponsorAgent(PMOAgent):
 
 
 # ============================================
-# PMO 实例 (1 个, 管 8 个 agent, 三权分立 + 3 维度分离)
+# PMO 实例 (1 个, 管 9 个 agent, 三权分立 + 3 维度分离 + 维度 4 侦察)
 # ============================================
 class PMOInstance:
-    """1 个 PMO 实例, 管 8 个 agent (DEC-2026-0002)
-    
+    """1 个 PMO 实例, 管 9 个 agent (DEC-2026-0002 + DEC-2026-0009)
+
     三权分立:
     - L0 监督权 (1 个): Sponsor
     - L1 行政权 (1 个): PMO-Main (维度 1 采集)
-    - L2 司法权 (6 个): Plan / Engineer (维度 2) / Monitor (维度 3) / Reviewer / Assessor / Message-Broker
+    - L2 司法权 (7 个): Plan / Engineer (维度 2) / Monitor (维度 3) / Reviewer / Assessor / Message-Broker / Scout (维度 4)
     """
-    
+
     def __init__(self, pmo_root: str):
         self.pmo_root = pmo_root
         self.pmo_main = PMOMainAgent(pmo_root)
@@ -724,6 +725,7 @@ class PMOInstance:
         self.assessor_agent = AssessorAgent(pmo_root)
         self.message_broker_agent = MessageBrokerAgent(pmo_root)
         self.sponsor_agent = SponsorAgent(pmo_root)
+        self.scout_agent = ScoutAgent(pmo_root)
         self.agents = [
             self.sponsor_agent,
             self.pmo_main,
@@ -732,7 +734,8 @@ class PMOInstance:
             self.monitor_agent,
             self.reviewer_agent,
             self.assessor_agent,
-            self.message_broker_agent
+            self.message_broker_agent,
+            self.scout_agent
         ]
     
     def activate_all(self):
@@ -757,10 +760,11 @@ class PMOInstance:
                     self.monitor_agent.name,
                     self.reviewer_agent.name,
                     self.assessor_agent.name,
-                    self.message_broker_agent.name
+                    self.message_broker_agent.name,
+                    self.scout_agent.name
                 ]
             },
-            "three_dimensions": {
+            "four_dimensions": {
                 "dimension_1_project_overall": {
                     "agent": self.pmo_main.name,
                     "data_source": "register.yaml + state + quota + archive + isolation"
@@ -774,6 +778,11 @@ class PMOInstance:
                     "agent": self.monitor_agent.name,
                     "data_source": "业务项目按 PMO 规范上报",
                     "required_metrics": MonitorAgent.REPORT_METRICS_5_BASIC
+                },
+                "dimension_4_tool_ecosystem": {
+                    "agent": self.scout_agent.name,
+                    "data_source": "GitHub Trending (Python/TypeScript/Go/Rust)",
+                    "evaluation_metrics": ["TOOL-M-001~005"]
                 }
             }
         }
@@ -803,10 +812,10 @@ class PMOInstance:
 if __name__ == "__main__":
     PMO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     
-    print("=== PMO 8 Agent (三权分立 + 3 维度分离, DEC-2026-0002) 演示 ===\n")
-    
+    print("=== PMO 9 Agent (三权分立 + 4 维度, DEC-2026-0002 + DEC-2026-0009) 演示 ===\n")
+
     # 1. 初始化 PMO 实例
-    print("[1] 初始化 PMO 实例 (1 个, 管 8 agent)")
+    print("[1] 初始化 PMO 实例 (1 个, 管 9 agent)")
     pmo = PMOInstance(PMO_ROOT)
     print(f"  - L0 Sponsor: {pmo.sponsor_agent.name}")
     print(f"  - L1 PMO-Main (维度 1): {pmo.pmo_main.name}")
@@ -815,7 +824,8 @@ if __name__ == "__main__":
     print(f"  - L2 Monitor (维度 3: 业务项目上报): {pmo.monitor_agent.name}")
     print(f"  - L2 Reviewer: {pmo.reviewer_agent.name}")
     print(f"  - L2 Assessor (3 维度考核): {pmo.assessor_agent.name}")
-    print(f"  - L2 Message-Broker (项目间消息): {pmo.message_broker_agent.name}\n")
+    print(f"  - L2 Message-Broker (项目间消息): {pmo.message_broker_agent.name}")
+    print(f"  - L2 Scout (维度 4: 工程工具侦察): {pmo.scout_agent.name}\n")
     
     # 2. 激活所有 agent
     print("[2] 激活所有 agent (从 idle 到 running)")
@@ -867,10 +877,10 @@ if __name__ == "__main__":
     msg_stats = pmo.message_broker_agent.process({"action": "get_message_stats"})
     print(f"  - 消息统计: {msg_stats['result']}\n")
     
-    # 8. L2 6 个 agent 审计 L1 (三权分立, DEC-2026-0002)
-    print("[8] L2 6 个 agent 审计 L1 (三权分立)")
+    # 8. L2 7 个 agent 审计 L1 (三权分立, DEC-2026-0002 + DEC-2026-0009)
+    print("[8] L2 7 个 agent 审计 L1 (三权分立)")
     audits = pmo.l2_audit_l1()
-    print(f"  - 审计结果数: {len(audits)} (Plan/Engineer/Monitor/Reviewer/Assessor/Message-Broker)\n")
+    print(f"  - 审计结果数: {len(audits)} (Plan/Engineer/Monitor/Reviewer/Assessor/Message-Broker/Scout)\n")
     
     # 9. L0 Sponsor 监督 L1 (打破递归)
     print("[9] L0 Sponsor 监督 L1 (顶层权威)")
@@ -878,21 +888,35 @@ if __name__ == "__main__":
     print(f"  - Sponsor 观察: {obs['pmo_main_state']}")
     print(f"  - 管理项目数: {len(obs['managed_projects'])}\n")
     
-    # 10. 反射 (introspection)
-    print("[10] 反射 (introspection) — 各 agent 看自己状态")
+    # 11. L2 Scout 工具侦察演示 (DEC-2026-0009, 维度 4)
+    print("[11] L2 Scout 工具侦察 (维度 4: 工程工具生态)")
+    scout_scan = pmo.scout_agent.process({"action": "scan", "languages": ["Python", "TypeScript"], "per_language": 10})
+    print(f"  - 扫描: {scout_scan['result']}")
+    scout_eval = pmo.scout_agent.process({"action": "evaluate", "top_n": 10})
+    print(f"  - 评估: {scout_eval['result']}")
+    scout_rec = pmo.scout_agent.process({"action": "recommend", "top_n": 5})
+    recs = scout_rec["result"]["recommendations"]
+    print(f"  - Top 5 推荐:")
+    for r in recs:
+        print(f"    [{r['score']:.1f}] {r['full_name']} (stars={r['stars']}, lang={r['language']})")
+    print()
+
+    # 12. 反射 (introspection)
+    print("[12] 反射 (introspection) — 各 agent 看自己状态")
     for agent in pmo.agents:
         r = agent.reflect()
         print(f"  - {agent.name}: state={r['state']}, layer={agent.layer}, reflection_count={r['reflection_count']}")
     print()
-    
-    # 11. 状态报告
-    print("[11] PMO 实例状态报告")
+
+    # 13. 状态报告
+    print("[13] PMO 实例状态报告")
     status = pmo.get_status()
     print(f"  - agent 总数: {status['agent_count']}")
     print(f"  - 三权分立: L0={status['three_powers']['L0_sponsor']}, L1={status['three_powers']['L1_pmo_main']}, L2={len(status['three_powers']['L2_judicial'])} 个司法权")
-    print(f"  - 3 维度采集:")
-    print(f"    - 维度 1 (业务项目整体): {status['three_dimensions']['dimension_1_project_overall']['agent']}")
-    print(f"    - 维度 2 (研发 5 阶段): {status['three_dimensions']['dimension_2_eng_5_stages']['agent']} → {len(status['three_dimensions']['dimension_2_eng_5_stages']['stages'])} 阶段")
-    print(f"    - 维度 3 (业务项目上报): {status['three_dimensions']['dimension_3_biz_reported']['agent']} → {len(status['three_dimensions']['dimension_3_biz_reported']['required_metrics'])} 指标")
+    print(f"  - 4 维度采集:")
+    print(f"    - 维度 1 (业务项目整体): {status['four_dimensions']['dimension_1_project_overall']['agent']}")
+    print(f"    - 维度 2 (研发 5 阶段): {status['four_dimensions']['dimension_2_eng_5_stages']['agent']} → {len(status['four_dimensions']['dimension_2_eng_5_stages']['stages'])} 阶段")
+    print(f"    - 维度 3 (业务项目上报): {status['four_dimensions']['dimension_3_biz_reported']['agent']} → {len(status['four_dimensions']['dimension_3_biz_reported']['required_metrics'])} 指标")
+    print(f"    - 维度 4 (工程工具生态): {status['four_dimensions']['dimension_4_tool_ecosystem']['agent']} → {status['four_dimensions']['dimension_4_tool_ecosystem']['data_source']}")
     print()
-    print("=== 8 Agent 演示完成 ===")
+    print("=== 9 Agent 演示完成 ===")

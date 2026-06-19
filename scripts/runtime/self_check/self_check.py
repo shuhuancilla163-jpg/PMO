@@ -855,10 +855,33 @@ class SelfChecker:
             self._record("D27-业务系统上报自检", CheckStatus.FAIL, f"异常: {e}")
             return False
 
+    def d28_scout_tool_scouting(self, pmo=None) -> bool:
+        """D28: 工具侦察自检 (DEC-2026-0009)"""
+        try:
+            from agents.scout_agent import ScoutAgent
+            agent = ScoutAgent(str(self.pmo_root))
+            agent_ok = agent.name == "Scout-Agent" and agent.layer == "L2"
+            metrics_ok = True
+            try:
+                from metrics.metrics import MetricsCollector
+                c = MetricsCollector(str(self.pmo_root))
+                metrics_ok = all(m in c.metrics for m in [
+                    "TOOL-M-001", "TOOL-M-002", "TOOL-M-003", "TOOL-M-004", "TOOL-M-005"
+                ])
+            except Exception:
+                metrics_ok = False
+            all_ok = agent_ok and metrics_ok
+            self._record("D28-工具侦察自检", CheckStatus.PASS if all_ok else CheckStatus.FAIL,
+                         f"ScoutAgent={'OK' if agent_ok else 'FAIL'}, 指标5项={'OK' if metrics_ok else 'FAIL'}")
+            return all_ok
+        except Exception as e:
+            self._record("D28-工具侦察自检", CheckStatus.FAIL, f"异常: {e}")
+            return False
+
     def run_all(self, pmo=None) -> Dict[str, Any]:
-        """运行所有自检 (9 项基础 + DEC-2026-0002 3 项 + 4 项机制 + 4 项自检)"""
+        """运行所有自检 (9 项基础 + DEC-2026-0002 3 项 + 4 项机制 + 4 项自检 + D17~D28)"""
         print("=" * 60)
-        print("  PMO 自检 m1.5 + DEC-2026-0002 (15 项)")
+        print("  PMO 自检 m1.5 + DEC-2026-0002 + DEC-2026-0009 (15+1 项)")
         print(f"  PMO_ROOT: {self.pmo_root}")
         print(f"  时间: {datetime.now(timezone.utc).isoformat()}")
         print("=" * 60)
@@ -934,6 +957,10 @@ class SelfChecker:
         print("\n【D27 业务系统上报自检 (m0.8, DEC-2026-0008)】")
         self.d27_biz_report_upstream()
 
+        # D28 工具侦察自检 (DEC-2026-0009)
+        print("\n【D28 工具侦察自检 (DEC-2026-0009)】")
+        self.d28_scout_tool_scouting(pmo)
+
         # 输出结果
         print("\n自检结果:")
         for i, r in enumerate(self.results, 1):
@@ -989,8 +1016,8 @@ if __name__ == "__main__":
     report_file = report_dir / "m1.5-self-check-report.json"
     with open(report_file, "w") as f:
         json.dump({
-            "version": "0.14.0",
-            "decision": "DEC-2026-0002 + DEC-2026-0004 + DEC-2026-0005 + DEC-2026-0008",
+            "version": "0.14.1",
+            "decision": "DEC-2026-0002 + DEC-2026-0004 + DEC-2026-0005 + DEC-2026-0008 + DEC-2026-0009",
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "summary": {
                 "total": result["total"],

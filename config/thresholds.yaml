@@ -1,0 +1,211 @@
+# PMO 考核阈值配置 (m0.9, DEC-2026-0009)
+#
+# 用途: PMO 统一管控考核阈值，业务项目可通过 reports/thresholds.yaml 覆盖
+# 加载: ThresholdEngine 启动时加载，支持按 project_id 覆盖
+#
+# 层级优先级（高→低）:
+#   biz-projects/<id>/reports/thresholds.yaml  # 项目级覆盖
+#   config/thresholds.yaml                    # PMO 默认
+#
+# 触发:
+#   - 定时考核跑批（每 6 小时）
+#   - 业务项目上报指标时即时比对
+#   - PMO 自检 m0.9
+version: "0.9.0"
+pmo_instance: "PMO-L1"
+
+# ============================================================
+# 1. 业务指标阈值（维度 3: 业务项目内业务上报合规）
+# ============================================================
+business_thresholds:
+  # 流耗时（秒）- P2 研发阶段
+  flow_latency:
+    unit: "seconds"
+    warn: 200
+    critical: 300
+    direction: "lower_is_better"
+    description: "端到端处理耗时，超过 warn 记录，超过 critical 触发告警"
+
+  # 异常率（0~1）
+  exception_rate:
+    unit: "ratio"
+    warn: 0.05    # 5%
+    critical: 0.20
+    direction: "lower_is_better"
+    description: "异常请求占比，超过 warn 警告，超过 critical 严重告警"
+
+  # 通过率（0~1）
+  pass_rate:
+    unit: "ratio"
+    warn: 0.90    # 90%
+    critical: 0.80
+    direction: "higher_is_better"
+    description: "测试/验收通过率，低于 warn 警告，低于 critical 严重告警"
+
+  # 回滚率（0~1）
+  rollback_rate:
+    unit: "ratio"
+    warn: 0.02    # 2%
+    critical: 0.05
+    direction: "lower_is_better"
+    description: "发布回滚占比，超过 warn 警告，超过 critical 严重告警"
+
+  # Token 消耗（每周期）
+  token_consumption:
+    unit: "count"
+    warn: 5000
+    critical: 8000
+    direction: "lower_is_better"
+    description: "每统计周期 Token 消耗量，超过 warn 警告，超过 critical 严重告警"
+
+
+# ============================================================
+# 2. 治理指标阈值（维度 1: 业务项目整体）
+# ============================================================
+governance_thresholds:
+  # 决策日志完整度（0~1）
+  decision_log_completeness:
+    unit: "ratio"
+    warn: 0.80
+    critical: 0.60
+    direction: "higher_is_better"
+    description: "实际记录决策数 / 应记录决策数，低于 warn 警告，低于 critical 严重"
+
+  # 归档完整度（0~1）
+  archive_completeness:
+    unit: "ratio"
+    warn: 0.85
+    critical: 0.70
+    direction: "higher_is_better"
+    description: "实际归档文件数 / 应归档文件数，低于 warn 警告，低于 critical 严重"
+
+  # 状态机合规率（0~1）
+  state_legality_rate:
+    unit: "ratio"
+    warn: 0.90
+    critical: 0.70
+    direction: "higher_is_better"
+    description: "合法状态转换次数 / 总状态转换次数，低于 warn 警告"
+
+  # 配额使用率（0~1）
+  quota_usage_rate:
+    unit: "ratio"
+    warn: 0.80    # 80% 警告
+    critical: 1.00
+    direction: "lower_is_better"
+    description: "当前配额使用量 / 配额上限，达到 critical 即触发暂停"
+
+
+# ============================================================
+# 3. 工程指标阈值（维度 2: 业务项目内研发 5 阶段）
+# ============================================================
+engineering_thresholds:
+  # 部署成功率（0~1）
+  deploy_success_rate:
+    unit: "ratio"
+    warn: 0.95
+    critical: 0.90
+    direction: "higher_is_better"
+    description: "成功部署次数 / 总部署次数，低于 warn 警告，低于 critical 严重"
+
+  # 异常拦截率（0~1）
+  exception_interception_rate:
+    unit: "ratio"
+    warn: 0.90
+    critical: 0.80
+    direction: "higher_is_better"
+    description: "被成功拦截的异常数 / 总异常数，低于 warn 警告"
+
+  # 性能基线达标率（0~1）
+  performance_baseline_rate:
+    unit: "ratio"
+    warn: 0.85
+    critical: 0.70
+    direction: "higher_is_better"
+    description: "符合性能基线的接口数 / 总接口数，低于 warn 警告"
+
+  # 可用性（0~1）
+  availability:
+    unit: "ratio"
+    warn: 0.99    # 99%
+    critical: 0.95
+    direction: "higher_is_better"
+    description: "正常运行时间占比，低于 warn 警告，低于 critical 严重"
+
+
+# ============================================================
+# 4. 考核评分权重
+# ============================================================
+assessment_weights:
+  # 3 个维度权重（总和 = 1.0）
+  dimension_1_weight: 0.30    # 业务项目整体
+  dimension_2_weight: 0.30    # 研发 5 阶段
+  dimension_3_weight: 0.40    # 业务上报合规（权重最高，因为靠业务主动上报）
+
+  # 各指标在维度内的权重
+  dimension_3_metrics:
+    flow_latency: 0.25
+    exception_rate: 0.30
+    pass_rate: 0.20
+    rollback_rate: 0.10
+    token_consumption: 0.15
+
+  dimension_2_metrics:
+    deploy_success_rate: 0.30
+    exception_interception_rate: 0.30
+    performance_baseline_rate: 0.20
+    availability: 0.20
+
+  dimension_1_metrics:
+    decision_log_completeness: 0.25
+    archive_completeness: 0.25
+    state_legality_rate: 0.25
+    quota_usage_rate: 0.25
+
+
+# ============================================================
+# 5. 考核判定规则
+# ============================================================
+assessment_rules:
+  # 单指标判定
+  metric_verdict:
+    ok:       "value 在 [0, warn] 或 [warn, critical] 且方向正确"
+    warning:  "value 在 [warn, critical] 且方向错误，或超过 warn 未超 critical"
+    critical: "value 超过 critical"
+    no_data:  "没有上报数据，无法判定"
+
+  # 维度判定（按得分）
+  dimension_verdict:
+    compliant:  "dimension_score >= 80"
+    warning:    "60 <= dimension_score < 80"
+    violation:  "dimension_score < 60"
+    no_data:    "没有数据，无法判定"
+
+  # 项目整体判定（加权平均）
+  overall_verdict:
+    excellent: "overall_score >= 90"
+    good:      "75 <= overall_score < 90"
+    warning:   "60 <= overall_score < 75"
+    violation: "overall_score < 60"
+
+
+# ============================================================
+# 6. 报告配置
+# ============================================================
+report_config:
+  # 定时跑批周期
+  schedule:
+    periodic: "6h"       # 每 6 小时跑一次
+    daily_summary: "00:00"  # 每天凌晨出日报
+
+  # 报告输出路径
+  output_dir: "reports/assessments"
+
+  # 报告保留天数
+  retention_days: 30
+
+  # 触发告警的最低级别
+  alert_threshold: "warning"
+
+  # 是否向 Sponsor 发送报告
+  sponsor_notify: true

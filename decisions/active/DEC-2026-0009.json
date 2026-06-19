@@ -1,0 +1,75 @@
+{
+  "decision_id": "DEC-2026-0009",
+  "timestamp": "2026-06-19T14:30:00Z",
+  "title": "L2 ScoutAgent: 扫描 GitHub Trending 全领域优质开源工具, 评估后推荐 Sponsor",
+  "category": "agent-addition",
+  "context": "PMO 框架需要持续跟踪工程工具生态（CI/CD、Agent 框架、评估工具、监控等），给 Sponsor 提供工程优化决策依据。现有 PMO 8 个 agent（DEC-2026-0002）缺少侦察/扫描功能。Sponsor 与 Engineer-Agent 讨论后，决定新增 L2 ScoutAgent。",
+  "decision": "新增 L2 ScoutAgent，职责：主动侦察 GitHub Trending 优质开源工具，按 5 维度评分，输出 DEC-TOOL-*.json 评估文档，集成到 Sponsor 仪表盘。ScoutAgent 不自动采纳工具，只推荐；采纳决策归 Sponsor。",
+  "rationale": "PMO 框架需要外部工程工具情报来源，ScoutAgent 负责持续侦察，Sponsor 负责决策采纳与否。扫描 GitHub Trending 是最自然的工程情报入口，每日自动扫描无需人工维护白名单。",
+  "alternatives_considered": [
+    "人工维护工具白名单（维护成本高，容易过时）",
+    "只扫描特定领域（如只用 CI/CD）（视野太窄，PMO 场景多样）",
+    "ScoutAgent 自动采纳工具（风险过高，采纳必须由 Sponsor 决定）"
+  ],
+  "scout_agent_spec": {
+    "layer": "L2 司法权",
+    "dimension": "维度 4: 工程工具生态",
+    "trigger": "定时（每 24 小时 GitHub Trending）+ 手动触发",
+    "data_source": "GitHub Trending API（Python/TypeScript/Go/Rust 每日 Top 50）",
+    "evaluation_dimensions": [
+      {"dim": 1, "name": "Stars 及增长率", "weight": "30%", "source": "GitHub API"},
+      {"dim": 2, "name": "活跃度", "weight": "25%", "source": "GitHub API (commit频率/PR处理/issue响应)"},
+      {"dim": 3, "name": "文档质量", "weight": "20%", "source": "GitHub API (README/CHANGELOG/许可证/docs/)"},
+      {"dim": 4, "name": "许可协议合规", "weight": "15%", "source": "GitHub API (MIT/Apache-2.0/BSD 等允许商用)"},
+      {"dim": 5, "name": "与 PMO 场景契合度", "weight": "10%", "source": "关键词匹配 (CI/CD/Agent/Eval/Monitor等)"}
+    ],
+    "output": {
+      "decision_docs": "decisions/active/DEC-TOOL-YYYY-NNNN.json",
+      "metrics_history": "metrics/tool-scouting/",
+      "dashboard_block": "tool_recommendations (Top 5 + 趋势变化)"
+    },
+    "integration": {
+      "sponsor_notifier": "notify_dashboard 区块 tool_recommendations",
+      "metrics_collector": "TOOL-M-001~005 指标",
+      "self_check": "D28 工具侦察自检",
+      "github_actions": "定时触发（pmo-scout workflow）"
+    }
+  },
+  "five_evaluation_metrics": {
+    "TOOL-M-001": {"name": "scanned_tools_total", "unit": "个", "purpose": "扫描工具总数"},
+    "TOOL-M-002": {"name": "recommended_tools_accepted", "unit": "个", "purpose": "Sponsor 采纳推荐数"},
+    "TOOL-M-003": {"name": "evaluation_coverage_languages", "unit": "种", "purpose": "评估覆盖语言数"},
+    "TOOL-M-004": {"name": "rising_projects_count", "unit": "个", "purpose": "新晋项目数（首次进入 Top 20）"},
+    "TOOL-M-005": {"name": "average_score", "unit": "分", "purpose": "平均评分"}
+  },
+  "impact_analysis": {
+    "scope": "PMO agent 层 + 指标体系 + Sponsor 通知 + 自检",
+    "affected_agents": ["新增 ScoutAgent（现有 8 个 → 9 个）"],
+    "affected_metrics": ["engineering 类别新增 5 项工具指标"],
+    "affected_notifications": ["SponsorNotifier 新增 tool_recommendations 看板区块"],
+    "affected_self_checks": ["D28 工具侦察自检"],
+    "risk": "low"
+  },
+  "actor": "L0 Sponsor + L2 Engineer-Agent",
+  "sponsor_approved": true,
+  "approval_timestamp": "2026-06-19T14:30:00Z",
+  "implementation": {
+    "files_to_add": [
+      "decisions/active/DEC-2026-0009.json",
+      "scripts/runtime/agents/scout_agent.py"
+    ],
+    "files_to_update": [
+      "scripts/runtime/agents/agent_base.py",
+      "scripts/runtime/metrics/metrics.py",
+      "scripts/runtime/notify/notify.py",
+      "scripts/runtime/self_check/self_check.py",
+      ".github/workflows/pmo-health-check.yml"
+    ],
+    "commits": [],
+    "release_version": "v0.14.1"
+  },
+  "links": {
+    "related_decisions": ["DEC-2026-0002", "DEC-2026-0008"],
+    "followup": "DEC 审批通过后 7 天内实施"
+  }
+}

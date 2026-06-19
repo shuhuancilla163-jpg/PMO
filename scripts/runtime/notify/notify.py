@@ -299,6 +299,18 @@ class SponsorNotifier:
         """未读通知数量"""
         return sum(1 for n in self.sponsor_inbox if not n["read"])
 
+    def notify_tool_recommendations(self, recommendations: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """工具推荐看板 (维度 4, DEC-2026-0009) — ScoutAgent 扫描结果推给 Sponsor"""
+        return self.notify_dashboard(
+            title="工程工具侦察看板 (维度 4)",
+            content={
+                "block": "tool_recommendations",
+                "dimension": "4_tool_ecosystem",
+                "count": len(recommendations),
+                "recommendations": recommendations,
+            }
+        )
+
 
 # ============================================
 # 演示 / 自测

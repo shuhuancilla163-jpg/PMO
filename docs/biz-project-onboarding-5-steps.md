@@ -16,9 +16,38 @@
 5. 业务项目接入 PMO 监管 (m1.3 + m0.4)
 ```
 
-## 第 1 步: 业务项目注册
+## 第 1 步: 业务项目注册 (m0.9 OnboardingSyncer 自动化)
 
 **业务项目填 `register.yaml`** (业务项目 ID/名称/类型/版本/Sponsor):
+
+> **m0.9 自动化**（DEC-2026-0009）：PMO 接入时，OnboardingSyncer 自动将以下文件同步到业务项目目录，无需手动复制。
+
+```yaml
+project_id: "1.2"
+name: "业务系统"
+type: "biz-system"
+version: "0.1.0"
+status: "active"
+sponsor: "Sponsor"
+registered_at: "2026-06-18T17:00:00Z"
+phase: "P0-init"
+```
+
+**OnboardingSyncer 接入时自动同步的文件**（业务项目注册后自动触发）：
+
+| 同步项 | 目标路径 | 说明 |
+|---|---|---|
+| register.yaml | biz-projects/\<id\>/ | 业务项目注册文件 |
+| 整体契约模板 | immutable/2-biz-specs/contract-\<id\>-overall.md | 整体契约 |
+| 5阶段契约模板 | immutable/2-biz-specs/contract-\<id\>-eng-5-stages.md | 研发契约 |
+| 业务agent契约 | immutable/2-biz-specs/contract-\<id\>-biz-ops-roles.md | 运营契约 |
+| SOP 模板 | biz-projects/\<id\>/biz-docs/ | 4 类 SOP 模板 |
+| 5阶段 agent 模板 | biz-projects/\<id\>/eng-roles/ | 5 阶段 agent 配置 |
+| 阈值配置 | biz-projects/\<id\>/reports/thresholds.yaml | 考核阈值（可覆盖） |
+| messaging.yaml | biz-projects/\<id\>/ | 消息订阅/发布配置 |
+| sync-metadata.json | biz-projects/\<id\>/reports/ | 同步元数据（幂等） |
+
+同步完成后自动记录 `reports/sync-metadata.json`，并通过 Message-Broker 通知业务项目。
 
 ```yaml
 project_id: "1.2"
@@ -77,7 +106,7 @@ biz-projects/<biz-project-id>/
 
 **关键**: 业务项目自管业务内容, PMO 不干预业务内容。
 
-## 第 4 步: 业务项目接入 PMO 消息机制
+## 第 4 步: 业务项目接入 PMO 消息机制 (m2.5 + m0.9 NormPusher)
 
 **业务项目注册时声明订阅/发布消息主题**:
 
@@ -96,29 +125,50 @@ publications:
 - 业务项目消息必须符合 PMO 协议
 - 业务项目消息经 PMO 实例中介 (业务项目不直接通信)
 
-## 第 5 步: 业务项目接入 PMO 监管
+## 第 5 步: 业务项目接入 PMO 监管 (m1.3 + m0.4 + m0.9)
 
-**业务项目按 PMO 规范上报关键指标**:
+**m0.9 考核闭环**（DEC-2026-0009）：业务项目接入后，PMO 自动开启以下考核机制：
 
-```yaml
-# biz-projects/<biz-project-id>/reports/metrics.yaml
-reported_metrics:
-  - "flow_latency"
-  - "exception_rate"
-  - "pass_rate"
-  - "rollback_rate"
-  - "token_consumption"
-custom_metrics:
-  - "业务项目自定 (按业务场景)"
+**5.1 指标上报**
 
-reporting_frequency: "每小时"
-reporting_format: "JSON"
-```
+**业务项目按 PMO 规范上报关键指标**（3 类，13 项）：
 
-**PMO 监管上报合规**:
-- `biz_metrics_report_compliance` (业务指标上报合规率)
-- `biz_metrics_report_timeliness` (业务指标上报及时率)
-- `biz_metrics_report_completeness` (业务指标上报完整度)
+| 类别 | 指标 | 方向 | warn | critical |
+|---|---|---|---|---|
+| 业务指标 | flow_latency（秒） | lower | 200 | 300 |
+| 业务指标 | exception_rate（0~1） | lower | 0.05 | 0.20 |
+| 业务指标 | pass_rate（0~1） | higher | 0.90 | 0.80 |
+| 业务指标 | rollback_rate（0~1） | lower | 0.02 | 0.05 |
+| 业务指标 | token_consumption（每周期） | lower | 5000 | 8000 |
+| 治理指标 | decision_log_completeness | higher | 0.80 | 0.60 |
+| 治理指标 | archive_completeness | higher | 0.85 | 0.70 |
+| 治理指标 | state_legality_rate | higher | 0.90 | 0.70 |
+| 治理指标 | quota_usage_rate | lower | 0.80 | 1.00 |
+| 工程指标 | deploy_success_rate | higher | 0.95 | 0.90 |
+| 工程指标 | exception_interception_rate | higher | 0.90 | 0.80 |
+| 工程指标 | performance_baseline_rate | higher | 0.85 | 0.70 |
+| 工程指标 | availability | higher | 0.99 | 0.95 |
+
+上报路径：`reports/metrics.yaml`，格式 JSON，每小时上报。
+
+**5.2 阈值考核引擎（ThresholdEngine）**
+
+PMO 按 3 维度加权考核业务项目：
+
+- **维度 1（权重 30%）**：治理指标（决策日志/归档/状态机/配额）
+- **维度 2（权重 30%）**：工程指标（部署/异常拦截/性能基线/可用性）
+- **维度 3（权重 40%）**：业务指标（流耗时/异常率/通过率/回滚率/Token消耗）
+
+整体得分 = Σ(维度得分 × 权重)，≥90 优秀 / ≥75 良好 / ≥60 警告 / <60 违规。
+
+**5.3 规范变更通知（NormPusher）**
+
+运行时 PMO 监听规范目录（immutable/ + config/）变更，检测到变更后通过 Message-Broker 发 Ping 给所有 active 业务项目，业务项目主动 Pull 变更内容。定时全量同步兜底（每天凌晨）。
+
+**PMO 监管上报合规**（3 项）：
+- `biz_metrics_report_compliance`（业务指标上报合规率）
+- `biz_metrics_report_timeliness`（业务指标上报及时率）
+- `biz_metrics_report_completeness`（业务指标上报完整度）
 
 **PMO 监管业务项目状态 + 业务异常**:
 - L1 PMO-Main 监管业务项目状态

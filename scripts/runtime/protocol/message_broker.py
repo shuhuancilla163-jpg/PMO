@@ -2,7 +2,7 @@
 PMO Message-Broker 模块 (message_broker.py, m1.6, DEC-2026-0004)
 - 业务项目↔业务项目消息经 PMO 实例中介 (0.0.15)
 - 6 类消息类型 (request/response/notification/alert/escalation/biz_event/biz_data)
-- 6 类主题 (biz.{id}.state/metric/exception/data + inter.biz.{a}.to.{b} + pmo.{layer}.{action})
+- 8 类主题 (biz.state/metric/exception/data + inter.biz.{a}.to.{b} + pmo.{layer}.{action} + pmo.schema.change + biz.{id}.schema.ack, 0.0.15 第 4 节 / m0.8 DEC-2026-0008)
 - 3 类 QoS (0=fire-and-forget / 1=at-least-once 默认 / 2=exactly-once)
 - 协议校验 (msg_id/msg_type/from/to/topic/qos/timestamp/layer/content 必填)
 - 重试策略 (QoS 1+ 5 次指数退避)
@@ -60,6 +60,8 @@ TOPIC_PATTERNS = {
     "biz_data": r"^biz\.[a-zA-Z0-9_.-]+\.data$",
     "inter_biz": r"^inter\.biz\.[a-zA-Z0-9_.-]+\.to\.[a-zA-Z0-9_.-]+$",
     "pmo_internal": r"^pmo\.(L0|L1|L2)\.[a-z_]+$",
+    "pmo_schema_change": r"^pmo\.schema\.change$",
+    "biz_schema_ack": r"^biz\.[a-zA-Z0-9_.-]+\.schema\.ack$",
 }
 
 

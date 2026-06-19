@@ -1,0 +1,70 @@
+# PMO 数据同步策略 (m0.8, DEC-2026-0008)
+# 配合 Schema Watcher 使用，定义 schema 变更的同步策略
+
+schema_change_policy:
+  enabled: false  # Schema Watcher 默认关闭（m0.8 规范）
+  watch_targets:
+    - config/biz-meta/E2-schema-*.json
+    - config/biz-meta/E3-glossary-*.json
+    - config/data-sync.yaml
+
+  # 触发条件（满足任一）
+  trigger_conditions:
+    - file_hash_sha256_changed: true
+    - version_field_incremented: true
+    - sync_policy_changed: true
+
+  # 通知方式
+  notification:
+    mechanism: message_broker  # 走 PMO Message-Broker 发轻量 Ping
+    topic: pmo.schema.change
+    qos: "1"  # at-least-once
+    # 注意：不发完整内容，业务系统主动 Pull
+
+  # ACK 超时策略
+  ack_timeout:
+    default_days: 7       # 普通变更 7 天
+    breaking_days: 3      # 破坏性变更 3 天
+    alert_on_timeout: true
+    escalate_on_breaking_timeout: true
+
+  # 业务项目适配策略
+  adaptation:
+    auto_notify_affected: true
+    affected_projects_discovery: auto  # 从 biz-projects/ 目录自动发现
+    migration_guide_required: false   # breaking 变更才强制要求
+
+# 业务系统上报策略（m0.8 方向二）
+biz_upstream_policy:
+  metric:
+    topic_pattern: "biz.{biz_project_id}.metric"
+    msg_type: biz_data
+    qos: "1"  # at-least-once
+    recommended_interval: "5min"
+    required_fields:
+      - biz_project_id
+      - phase
+      - metrics
+      - timestamp
+
+  exception:
+    topic_pattern: "biz.{biz_project_id}.exception"
+    msg_type: alert
+    qos: "0"  # fire-and-forget
+    required_fields:
+      - biz_project_id
+      - exception_type
+      - exception_code
+      - severity
+      - timestamp
+
+  data:
+    topic_pattern: "biz.{biz_project_id}.data"
+    msg_type: biz_data
+    qos: "2"  # exactly-once
+    required_fields:
+      - biz_project_id
+      - data_type
+      - data_key
+      - data_hash
+      - timestamp

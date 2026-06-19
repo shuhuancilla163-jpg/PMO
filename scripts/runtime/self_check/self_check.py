@@ -11,6 +11,8 @@ PMO 自检模块 (self_check.py)
   - D13: 异常拦截检测
   - D16: 指标可贯彻检测
 - D17: 消息流通自检 (m1.6, DEC-2026-0004) — 业务项目↔业务项目消息经 PMO 中介
+- D26: Schema 变更通知自检 (m0.8, DEC-2026-0008)
+- D27: 业务系统上报自检 (m0.8, DEC-2026-0008)
 - PMO 升级机制可演示
 - Sponsor 报告可出
 - 自进化机制可演示 (0.0.8)
@@ -706,6 +708,153 @@ class SelfChecker:
             self._record("D25-端到端自测", CheckStatus.FAIL, f"异常: {e}")
             return False
 
+    def d26_schema_change_notification(self) -> bool:
+        """D26: Schema 变更通知自检 (m0.8, DEC-2026-0008)
+
+        验收 4 项子检查:
+        - E2/E3 变更触发事件
+        - 事件写入 sync-logs
+        - 业务系统可订阅 pmo.schema.change
+        - ACK 超时告警
+        """
+        import tempfile
+        import json
+        import hashlib
+        from pathlib import Path
+        from datetime import datetime, timezone, timedelta
+
+        try:
+            from schema_watcher.schema_watcher import SchemaWatcher, ChangeSeverity
+
+            watcher = SchemaWatcher(str(self.pmo_root))
+
+            # E2a: E2/E3 变更触发事件
+            temp_file = self.pmo_root / "config" / "biz-meta" / "E2-schema-selftest.json"
+            v1 = json.dumps({"version": "1.0", "schema": {}})
+            v2 = json.dumps({"version": "1.1", "schema": {"x": "y"}})
+            temp_file.write_text(v1, encoding="utf-8")
+            watcher._file_hashes[str(temp_file)] = hashlib.sha256(v1.encode()).hexdigest()[:16]
+            temp_file.write_text(v2, encoding="utf-8")
+
+            events = watcher.check_for_changes()
+            e2a_ok = any(
+                ev.get("event_type") == "schema_change"
+                and any("E2-schema-selftest" in f["file"] for f in ev.get("changed_files", []))
+                for ev in events
+            )
+
+            # E2b: 事件写入 sync-logs
+            today = datetime.now(timezone.utc).strftime("%Y%m%d")
+            log_file = watcher.events_dir / f"change-events-{today}.json"
+            e2b_ok = log_file.exists() and log_file.stat().st_size > 0
+            if e2b_ok:
+                try:
+                    data = json.loads(log_file.read_text(encoding="utf-8"))
+                    e2b_ok = isinstance(data, list) and len(data) > 0
+                except Exception:
+                    e2b_ok = False
+
+            # E2c: 业务系统可订阅 pmo.schema.change（通过 Message-Broker）
+            from protocol.message_broker import MessageBroker, MessageType, QoSLevel
+            broker = MessageBroker(str(self.pmo_root))
+            watcher._broker = broker
+            sub_ok = broker.subscribe("biz-client", "pmo.schema.change")
+            e2c_ok = sub_ok and "pmo.schema.change" in broker.subscriptions.get("biz-client", [])
+
+            # E2d: ACK 超时告警
+            past = datetime.now(timezone.utc) - timedelta(days=8)
+            watcher._pending_acks["EVT-ST-D26"] = {
+                "event": {
+                    "event_id": "EVT-ST-D26",
+                    "affected_biz_projects": ["1.2-finance"],
+                    "severity": "info"
+                },
+                "deadline": past.isoformat(),
+                "acks": {},
+                "sent": (past - timedelta(days=1)).isoformat()
+            }
+            alerts = watcher.check_ack_timeouts()
+            e2d_ok = any(a["event_id"] == "EVT-ST-D26" for a in alerts)
+
+            # 清理
+            try:
+                temp_file.unlink()
+            except Exception:
+                pass
+
+            all_ok = e2a_ok and e2b_ok and e2c_ok and e2d_ok
+            detail = (
+                f"E2a={'OK' if e2a_ok else 'FAIL'}(变更触发事件), "
+                f"E2b={'OK' if e2b_ok else 'FAIL'}(写sync-logs), "
+                f"E2c={'OK' if e2c_ok else 'FAIL'}(可订阅pmo.schema.change), "
+                f"E2d={'OK' if e2d_ok else 'FAIL'}(ACK超时告警)"
+            )
+            self._record("D26-Schema变更通知自检", CheckStatus.PASS if all_ok else CheckStatus.FAIL, detail)
+            return all_ok
+        except Exception as e:
+            self._record("D26-Schema变更通知自检", CheckStatus.FAIL, f"异常: {e}")
+            return False
+
+    def d27_biz_report_upstream(self) -> bool:
+        """D27: 业务系统上报自检 (m0.8, DEC-2026-0008)
+
+        验收 4 项子检查:
+        - 业务系统可通过 broker 发送 metric
+        - 异常上报进 PMO 告警队列
+        - 数据上报写入 PMO data-logs
+        - 指标进 PMO 看板
+        """
+        try:
+            from schema_watcher.schema_watcher import SchemaWatcher
+            from metrics.metrics import MetricsCollector
+
+            watcher = SchemaWatcher(str(self.pmo_root))
+
+            # D27a: metric 上报
+            r1 = watcher.handle_biz_report(
+                biz_project_id="1.2-finance",
+                report_type="metric",
+                payload={"phase": "P2", "metrics": {"latency": 100}, "period": "5min"}
+            )
+            d27a_ok = r1.get("success", False) and r1.get("topic") == "biz.1.2-finance.metric"
+
+            # D27b: exception 上报
+            r2 = watcher.handle_biz_report(
+                biz_project_id="1.2-finance",
+                report_type="exception",
+                payload={"exception_type": "ERR", "severity": "warning"}
+            )
+            d27b_ok = r2.get("success", False) and r2.get("topic") == "biz.1.2-finance.exception"
+
+            # D27c: data 上报
+            r3 = watcher.handle_biz_report(
+                biz_project_id="1.2-finance",
+                report_type="data",
+                payload={"data_type": "test", "data_key": "K001"}
+            )
+            d27c_ok = r3.get("success", False) and r3.get("topic") == "biz.1.2-finance.data"
+
+            # D27d: 指标进 PMO 看板
+            try:
+                collector = MetricsCollector(str(self.pmo_root))
+                dash = collector.get_dashboard()
+                d27d_ok = "summary" in dash
+            except Exception:
+                d27d_ok = False
+
+            all_ok = d27a_ok and d27b_ok and d27c_ok and d27d_ok
+            detail = (
+                f"metric={'OK' if d27a_ok else 'FAIL'}, "
+                f"exception={'OK' if d27b_ok else 'FAIL'}, "
+                f"data={'OK' if d27c_ok else 'FAIL'}, "
+                f"看板={'OK' if d27d_ok else 'FAIL'}"
+            )
+            self._record("D27-业务系统上报自检", CheckStatus.PASS if all_ok else CheckStatus.FAIL, detail)
+            return all_ok
+        except Exception as e:
+            self._record("D27-业务系统上报自检", CheckStatus.FAIL, f"异常: {e}")
+            return False
+
     def run_all(self, pmo=None) -> Dict[str, Any]:
         """运行所有自检 (9 项基础 + DEC-2026-0002 3 项 + 4 项机制 + 4 项自检)"""
         print("=" * 60)
@@ -777,6 +926,14 @@ class SelfChecker:
         print("\n【D25 PMO MVP 端到端自测 (m6.1)】")
         self.d25_mvp_end_to_end()
 
+        # D26 Schema 变更通知自检 (m0.8, DEC-2026-0008)
+        print("\n【D26 Schema 变更通知自检 (m0.8, DEC-2026-0008)】")
+        self.d26_schema_change_notification()
+
+        # D27 业务系统上报自检 (m0.8, DEC-2026-0008)
+        print("\n【D27 业务系统上报自检 (m0.8, DEC-2026-0008)】")
+        self.d27_biz_report_upstream()
+
         # 输出结果
         print("\n自检结果:")
         for i, r in enumerate(self.results, 1):
@@ -832,8 +989,8 @@ if __name__ == "__main__":
     report_file = report_dir / "m1.5-self-check-report.json"
     with open(report_file, "w") as f:
         json.dump({
-            "version": "0.12.0",
-            "decision": "DEC-2026-0002 + DEC-2026-0004 + DEC-2026-0005",
+            "version": "0.14.0",
+            "decision": "DEC-2026-0002 + DEC-2026-0004 + DEC-2026-0005 + DEC-2026-0008",
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "summary": {
                 "total": result["total"],

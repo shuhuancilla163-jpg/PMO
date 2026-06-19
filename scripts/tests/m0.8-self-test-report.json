@@ -1,0 +1,51 @@
+{
+  "version": "0.8.0",
+  "decision": "DEC-2026-0008",
+  "test_date": "2026-06-19T12:01:34.248966+00:00",
+  "task": "m0.8 双向消息通知",
+  "checks": [
+    {
+      "id": "N1_schema_watcher_detects_change",
+      "name": "Schema Watcher 监听变更生成事件",
+      "result": "pass",
+      "details": "变更事件数: 1, 检测到 E2-schema-test 变更: True"
+    },
+    {
+      "id": "N2_change_event_written_to_log",
+      "name": "变更事件写入事件日志",
+      "result": "pass",
+      "details": "日志文件: change-events-20260619.json, 存在: True, 大小: 949 bytes"
+    },
+    {
+      "id": "N3_schema_change_ping_sent",
+      "name": "pmo.schema.change 轻量 Ping 可发",
+      "result": "pass",
+      "details": "pmo.schema.change Ping 已发, 不含完整 diff 内容"
+    },
+    {
+      "id": "N4_biz_reports_all_3_types",
+      "name": "业务系统上报 metric/exception/data 全通",
+      "result": "pass",
+      "details": "metric=OK, exception=OK, data=OK",
+      "sub_checks": {
+        "metric": "pass",
+        "exception": "pass",
+        "data": "pass"
+      }
+    },
+    {
+      "id": "N5_ack_timeout_alert",
+      "name": "ACK 超时告警可触发",
+      "result": "pass",
+      "details": "超时事件数: 1, 触发告警: True"
+    }
+  ],
+  "summary": {
+    "total": 5,
+    "passed": 5,
+    "failed": 0,
+    "pass_rate": "100.0%"
+  },
+  "acceptance_criteria": "N1-N5 全部 pass, m0.8 通过",
+  "status": "completed"
+}
